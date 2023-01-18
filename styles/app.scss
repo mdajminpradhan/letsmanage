@@ -1,0 +1,41 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+* {
+    color: white;
+}
+
+body {
+    background-color: black;
+}
+
+// custom grid column
+.app-layout {
+    display: grid;
+    grid-template-columns: .25fr 1fr;
+}
+
+// react date picker
+.react-datepicker, .react-datepicker__header {
+    background: #020b1c !important;
+    border-color: #020b1c !important;
+}
+
+.react-datepicker__day-name, .react-datepicker__day, .react-datepicker__time-name {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.react-datepicker__day:hover, .react-datepicker__month-text:hover, .react-datepicker__quarter-text:hover, .react-datepicker__year-text:hover {
+    background-color: #2094FF !important;
+}
+
+.react-datepicker__day--selected {
+    background-color: #2094FF !important;
+}
+
+.react-datepicker__current-month {
+    color: rgba(255, 255, 255, 0.85) !important;
+}
+
+.react-datepicker-wrapper {
+    width: 100px !important;
+}
