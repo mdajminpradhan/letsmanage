@@ -39,8 +39,6 @@ const Home = () => {
           querySnapshot.forEach(async (doc) => {
             const record = doc.data();
             record.id = doc.id;
-            console.log(record);
-
             records.push(record);
           });
 
@@ -78,7 +76,7 @@ const Home = () => {
                               <span>{task.name || 'Task name'}</span>
                             </div>
                             <div className="flex items-center">
-                              <FlagIcon className={`h-5 w-5 ${task?.flagSelected?.color}`} />
+                              <FlagIcon className={`h-5 w-5 ${task?.priority?.color}`} />
                               <p className="ml-8 mr-2">{task?.taskDate}</p>
                             </div>
                           </div>

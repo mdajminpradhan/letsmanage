@@ -13,6 +13,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/router';
+import { format } from 'date-fns';
 
 const schema = yup
   .object()
@@ -43,7 +44,7 @@ const priorities = [
 
 const EditTask = ({ isOpen, setIsOpen, task, spaceId, taskId }) => {
   const [selectedSpace, setSelectedSpace] = useState([]);
-  const [selectedUser, setSelectedUser] = useState([]);
+  const [selectedUser, setSelectedUser] = useState('');
   const [flagSelected, setFlagSelected] = useState('');
   const [subTasks, setSubTasks] = useState([]);
   const [taskDate, setTaskDate] = useState(new Date());
@@ -51,6 +52,12 @@ const EditTask = ({ isOpen, setIsOpen, task, spaceId, taskId }) => {
 
   // router
   const { push } = useRouter();
+
+  // app global store
+  const { spaces, users } = useAppStore((state) => ({
+    spaces: state.spaces,
+    users: state.users
+  }));
 
   const {
     register,
@@ -65,27 +72,29 @@ const EditTask = ({ isOpen, setIsOpen, task, spaceId, taskId }) => {
   useEffect(() => {
     if (!!task) {
       reset({ name: task.name, description: task.description });
-      setSelectedUser(task?.selectedEmployee);
-      setFlagSelected(task?.flagSelected);
-      setTaskDate(task?.taskDate)
+      // setSelectedUser(task?.selectedEmployee);
+      setFlagSelected(task?.priority);
+      setTaskDate(task?.taskDate);
       setSubTasks(task?.subTasks || []);
 
-      getDoc(task?.selectedSpace).then(space => {
-        const record = space.data()
-        record.id = space.id
+      // user data
+      const docRef = doc(getFirestore(), 'users', task?.selectedEmployeeId);
+      getDoc(docRef).then((employee) => {
+        const record = employee.data();
+        record.id = employee.id;
 
-        setSelectedSpace(record)
-      })
+        setSelectedUser(record);
+      });
+
+      // space data
+      getDoc(task?.selectedSpace).then((space) => {
+        const record = space.data();
+        record.id = space.id;
+
+        setSelectedSpace(record);
+      });
     }
   }, [task]);
-
-  console.log(selectedSpace);
-
-  // app global store
-  const { spaces, users } = useAppStore((state) => ({
-    spaces: state.spaces,
-    users: state.users
-  }));
 
   // replacing states
   useEffect(() => {
@@ -98,22 +107,23 @@ const EditTask = ({ isOpen, setIsOpen, task, spaceId, taskId }) => {
 
   console.log(spaceId, taskId);
 
-  // creating task
-  const createTask = async (formdata) => {
+  // updateTask task
+  const updateTask = async (formdata) => {
     setIsLoading(true);
 
-    if (selectedUser === [] && flagSelected === '' && subTasks === []) {
+    if (selectedUser === '' && flagSelected === '') {
       toast.error('Please all the fields');
       return;
     }
 
     // extending formdata
     formdata.selectedSpace = doc(getFirestore(), 'spaces', selectedSpace.id);
-    formdata.selectedEmployee = selectedUser;
-    formdata.flagSelected = flagSelected;
+    formdata.priority = flagSelected;
     formdata.subTasks = subTasks;
-    formdata.taskDate = taskDate;
+    !!taskDate ? (formdata.taskDate = format(taskDate, 'dd/MM/yyyy')) : taskDate;
     formdata.status = 'To Do';
+    formdata.selectedEmployeeId = selectedUser?.id;
+    formdata.selectedEmployeeName = selectedUser?.name;
 
     try {
       const docRef = doc(getFirestore(), `spaces/${spaceId}/tasks`, taskId);
@@ -136,9 +146,7 @@ const EditTask = ({ isOpen, setIsOpen, task, spaceId, taskId }) => {
       setIsLoading(false);
 
       // showing toast
-      toast('Good Job!', {
-        icon: '👏'
-      });
+      toast.error('Failed to update task...');
     }
   };
 
@@ -172,7 +180,7 @@ const EditTask = ({ isOpen, setIsOpen, task, spaceId, taskId }) => {
         <div className="fixed right-14 bottom-14 overflow-y-auto flex items-center justify-center p-4 text-center">
           <TransitionChild>
             <Dialog.Panel className="w-[650px] bg-gray-900  transform rounded-lg px-6 py-4 text-left align-middle shadow-xl transition-all">
-              <form onSubmit={handleSubmit(createTask)}>
+              <form onSubmit={handleSubmit(updateTask)}>
                 <div className="max-h-[450px] overflow-y-scroll scrollbar-thin">
                   <div className="flex justify-between items-center">
                     <div className="flex items-center">
@@ -370,6 +378,7 @@ const EditTask = ({ isOpen, setIsOpen, task, spaceId, taskId }) => {
                         className="bg-transparent relative -top-1 cursor-pointer focus:ring-0 outline-none ml-2 text-sm"
                         title="Start date"
                         dateFormat="dd/MM/yyyy"
+                        placeholderText="Task date"
                       />
                     </div>
                   </div>

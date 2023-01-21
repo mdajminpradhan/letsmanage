@@ -9,7 +9,6 @@ import { useRouter } from 'next/router';
 import { deleteDoc, doc, getDoc, getFirestore, updateDoc } from 'firebase/firestore';
 import useAppStore from '@/appStore';
 import EditTask from '@/components/dashboard/EditTask';
-import { format } from 'date-fns';
 
 const status = ['To Do', 'In Progress', 'Complete'];
 
@@ -115,10 +114,10 @@ const Tasks = () => {
                   </div>
                 </Listbox>
 
-                <FlagIcon className={`h-5 w-5 fill-third ml-10 ${task?.flagSelected?.color}`} />
-                <p className="text-sm ml-10">{task?.taskDate || 'Task date'}</p>
+                <FlagIcon className={`h-5 w-5 fill-third ml-10 ${task?.priority?.color}`} />
+                <p className="text-sm ml-10">{!!task?.taskDate ? task?.taskDate : 'Unsceduled task' || 'Task date'}</p>
 
-                <p className="text-sm ml-10">{task?.selectedEmployee?.name || 'Name'}</p>
+                <p className="text-sm ml-10">{task?.selectedEmployeeName || 'Name'}</p>
               </div>
             </div>
 

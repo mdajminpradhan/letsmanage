@@ -19,19 +19,16 @@ import Link from 'next/link';
 import CopyInvite from '../dashboard/CopyInvite';
 
 const Layout = ({ titleFromChild = '', children }) => {
-  const { pathname } = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [isShortcusOpen, setIsShortcusOpen] = useState(false);
   const [isCopyInviteOpen, setIsCopyInviteOpen] = useState(false);
   const [title, setTitle] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
 
   // app global store
-  const { isCreateTaskOpen, setIsCreateTaskOpen, userData, spaces, setSpaces, setUsers } = useAppStore((state) => ({
+  const { isCreateTaskOpen, setIsCreateTaskOpen, userData, setSpaces, setUsers } = useAppStore((state) => ({
     isCreateTaskOpen: state.isCreateTaskOpen,
     setIsCreateTaskOpen: state.setIsCreateTaskOpen,
     userData: state.userData,
-    spaces: state.spaces,
     setSpaces: state.setSpaces,
     setUsers: state.setUsers
   }));
@@ -50,7 +47,6 @@ const Layout = ({ titleFromChild = '', children }) => {
 
               if (docSnap.exists()) {
                 setTitle(docSnap.data().name);
-                setIsLoading(false);
               } else {
                 console.log('No such document!');
               }
@@ -62,7 +58,6 @@ const Layout = ({ titleFromChild = '', children }) => {
 
               if (docSnap.exists()) {
                 setTitle(docSnap.data().name);
-                setIsLoading(false);
               } else {
                 console.log('No such document!');
               }
@@ -120,68 +115,38 @@ const Layout = ({ titleFromChild = '', children }) => {
             <LayoutLeft />
           </section>
         )}
+
         <section className="overflow-x-scroll">
           <div className={`flex justify-between items-center px-8 ${userData?.role !== 'User' ? 'mt-8' : 'mt-5'}`}>
-            {pathname === '/' ? (
-              userData?.role == 'User' ? (
-                <div className="flex items-center">
-                  <div className="flex items-center pl-4">
-                    <p className="h-9 w-9 rounded-xl bg-[#2094FF] bg-opacity-[25%] flex justify-center items-center mr-2 font-medium text-sm">LM</p>
-                    <p className="text-white text-xl">Let&apos;s Manage</p>
-                  </div>
-                  <Link href="/" legacyBehavior>
-                    <div className="flex items-center cursor-pointer relative left-10 mt-1">
-                      <div className="h-8 w-8 relative">
-                        <Image src="/assets/icons/house.png" alt="Picture of the author" fill className="object-contain	" />
-                      </div>
-                      <a className="w-full ml-2">Dashboard</a>
-                    </div>
-                  </Link>
-                  <Link href={`/tasks?spaceId=${userData?.departmentId}`} legacyBehavior>
-                    <a className="pl-11 flex items-center mt-1">
-                      <span className="bg-secondary h-1.5 w-1.5 rounded-full block mr-2"></span>
-                      <span>{userData?.department || 'Department name'}</span>
-                    </a>
-                  </Link>
-                </div>
-              ) : isLoading ? (
-                <p className="text-xl">Fetching...</p>
-              ) : (
-                <h2 className="text-xl font-medium">{title || 'Space'}</h2>
-              )
-            ) : userData?.role !== 'User' ? (
+            {userData?.role == 'User' ? (
               <div className="flex items-center">
-                <div className="h-9 w-9 rounded-lg bg-white bg-opacity-10 grid place-content-center">
-                  <span className="h-5 w-5 rounded-full border-[5px] border-secondary block"></span>
-                </div>
-                {titleFromChild !== '' ? <h2 className="text-xl font-medium ml-2">{titleFromChild}</h2> : <h2 className="text-xl font-medium ml-2">{title}</h2>}
-              </div>
-            ) : (
-              <div className="flex items-center">
-                <div className="flex items-center mb-5 pl-4">
+                <div className="flex items-center pl-4">
                   <p className="h-9 w-9 rounded-xl bg-[#2094FF] bg-opacity-[25%] flex justify-center items-center mr-2 font-medium text-sm">LM</p>
-                  <p className="text-white text-xl pt-8 mb-8">Let&apos;s Manage</p>
+                  <p className="text-white text-xl">Let&apos;s Manage</p>
                 </div>
                 <Link href="/" legacyBehavior>
-                  <div className="flex items-center cursor-pointer relative -top-1.5 left-10">
+                  <div className="flex items-center cursor-pointer relative left-10 mt-1">
                     <div className="h-8 w-8 relative">
                       <Image src="/assets/icons/house.png" alt="Picture of the author" fill className="object-contain	" />
                     </div>
                     <a className="w-full ml-2">Dashboard</a>
                   </div>
                 </Link>
-                <ul className="flex relative -top-1.5 left-5">
-                  {spaces?.map((record, index) => (
-                    <li className="w-full flex justify-between items-center" key={index}>
-                      <Link href={`/tasks?spaceId=${record.id}`} legacyBehavior>
-                        <a className="pl-11 flex items-center">
-                          <span className="bg-secondary h-1.5 w-1.5 rounded-full block mr-2"></span>
-                          <span>{record.name || 'Space title'}</span>
-                        </a>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
+                <Link href={`/tasks?spaceId=${userData?.departmentId}`} legacyBehavior>
+                  <a className="pl-11 flex items-center mt-1">
+                    <span className="bg-secondary h-1.5 w-1.5 rounded-full block mr-2"></span>
+                    <span>{userData?.department || 'Department name'}</span>
+                  </a>
+                </Link>
+              </div>
+            ) : null}
+
+            {userData?.role !== 'User' && (
+              <div className="flex items-center">
+                <div className="h-9 w-9 rounded-lg bg-white bg-opacity-10 grid place-content-center">
+                  <span className="h-5 w-5 rounded-full border-[5px] border-secondary block"></span>
+                </div>
+                {titleFromChild !== '' ? <h2 className="text-xl font-medium ml-2">{titleFromChild}</h2> : <h2 className="text-xl font-medium ml-2">{title}</h2>}
               </div>
             )}
 
@@ -206,10 +171,11 @@ const Layout = ({ titleFromChild = '', children }) => {
                 <Menu.Items className="absolute right-0 mt-2 w-48 origin-top-right divide-y rounded-md bg-amrblue bg-opacity-25 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                   <div className="py-1 relative">
                     <div className="pl-2 pt-2 pb-2 border-b border-white border-opacity-25">
-                      <p>{(userData?.name)?.substring(0, 15) + '...'}</p>
-                      <p className="text-xs">{(userData?.email)?.substring(0, 20) + '...'}</p>
+                      <p>{userData?.name?.substring(0, 15) + '...'}</p>
+                      <p className="text-xs">{userData?.email?.substring(0, 20) + '...'}</p>
                     </div>
                     {/* {userData?.role !== 'User' && ( */}
+                    {/* //TODO: uncoment the logic */}
                     <>
                       <Menu.Item>
                         <button className={`group flex w-full items-center rounded-md px-4 py-2 text-sm`}>Profile</button>
