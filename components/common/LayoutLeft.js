@@ -1,63 +1,39 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { PlusSmallIcon } from '@heroicons/react/24/solid';
+import { EllipsisHorizontalIcon, PlusSmallIcon } from '@heroicons/react/24/solid';
 import Image from 'next/image';
-import CreateSpace from './CreateSpace';
-import { collection, query, getFirestore, onSnapshot, where } from 'firebase/firestore';
+import CreateSpace from 'components/dashboard/CreateSpace';
+import { getFirestore, doc, deleteDoc } from 'firebase/firestore';
 import useAppStore from '@/appStore';
+import { Menu } from '@headlessui/react';
+import MenuTransition from 'components/common/MenuTransition';
+import { TrashIcon } from '@heroicons/react/24/outline';
 
 const LayoutLeft = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // app global store
-  const { isCreateSpaceOpen, setIsCreateSpaceOpen, spaces, setSpaces, setUsers } = useAppStore((state) => ({
+  const { isCreateSpaceOpen, setIsCreateSpaceOpen, spaces } = useAppStore((state) => ({
     isCreateSpaceOpen: state.isCreateSpaceOpen,
     setIsCreateSpaceOpen: state.setIsCreateSpaceOpen,
-    spaces: state.spaces,
-    setSpaces: state.setSpaces,
-    users: state.users,
-    setUsers: state.setUsers,
+    spaces: state.spaces
   }));
 
   useEffect(() => {
     setIsOpen(isCreateSpaceOpen);
   }, [isCreateSpaceOpen]);
 
-  // getting all spaces
-  useEffect(() => {
-    (async () => {
-      const q = query(collection(getFirestore(), 'spaces'));
+  // deleting task
+  const handleDelete = async (spaceId) => {
+    setIsDeleting(true);
 
-      onSnapshot(q, (querySnapshot) => {
-        const records = [];
-        querySnapshot.forEach((doc) => {
-          const record = doc.data();
-          record.id = doc.id;
-
-          records.push(record);
-        });
-        setSpaces(records);
-      });
-    })();
-  }, []);
-
-  // getting all users
-  useEffect(() => {
-    (async () => {
-      const q = query(collection(getFirestore(), 'users'), where('status', '==', 'approved'));
-
-      onSnapshot(q, (querySnapshot) => {
-        const records = [];
-        querySnapshot.forEach((doc) => {
-          const record = doc.data();
-          record.id = doc.id;
-
-          records.push(record);
-        });
-        setUsers(records);
-      });
-    })();
-  }, []);
+    try {
+      await deleteDoc(doc(getFirestore(), 'spaces', spaceId));
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <>
@@ -91,16 +67,35 @@ const LayoutLeft = () => {
         </div>
 
         {/* spaces loop starts here */}
-        <ul className="mt-2">
+        <ul className="mt-4">
           {spaces?.length > 0 ? (
             spaces?.map((record, index) => (
-              <li className="hover:bg-white hover:bg-opacity-10 py-2 w-full" key={index}>
+              <li className="hover:bg-white hover:bg-opacity-10 py-2 w-full flex justify-between items-center" key={index}>
                 <Link href={`/tasks?spaceId=${record.id}`} legacyBehavior>
                   <a className="pl-11 flex items-center">
                     <span className="bg-secondary h-1.5 w-1.5 rounded-full block mr-2"></span>
                     <span>{record.name || 'Space title'}</span>
                   </a>
                 </Link>
+                <Menu as="div" className="relative inline-block text-left">
+                  <div>
+                    <Menu.Button className="text-white outline-none focus:ring-0 pr-3">
+                      <EllipsisHorizontalIcon className="h-6 w-6" />
+                    </Menu.Button>
+                  </div>
+                  <MenuTransition>
+                    <Menu.Items className="absolute right-0 mt-2 w-40 origin-top-rightrounded-md shadow-lg bg-amrblue bg-opacity-25 rounded-lg focus:ring-0 focus:outline-none">
+                      <div className="px-2 py-2 cursor-pointer">
+                        <Menu.Item>
+                          <div className="flex items-center" onClick={() => handleDelete(record.id)}>
+                            <TrashIcon className="h-6 w-6 stroke-red-400" />
+                            <span className="ml-2">{isDeleting === true ? 'Deleting...' : 'Delete'}</span>
+                          </div>
+                        </Menu.Item>
+                      </div>
+                    </Menu.Items>
+                  </MenuTransition>
+                </Menu>
               </li>
             ))
           ) : (

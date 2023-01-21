@@ -32,7 +32,7 @@ const App = ({ Component, pageProps }) => {
   return (
     <>
       <Component {...pageProps} />
-      <Toaster position="top-center" reverseOrder={false} />
+      <Toaster position="bottom-left" reverseOrder={false} />
     </>
   );
 };
