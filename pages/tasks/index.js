@@ -286,9 +286,11 @@ const Tasks = () => {
                     </div>
                   </Listbox>
                   <div className="col-span-1 py-3 border-r border-white border-opacity-25 h-full">
-                    <FlagIcon className={`h-5 w-5 mx-auto ${task?.flagSelected?.color}`} />
+                    <FlagIcon className={`h-5 w-5 mx-auto ${task?.priority?.color}`} />
                   </div>
-                  <p className="col-span-2 py-3 border-r border-white border-opacity-25 text-center text-sm h-full">{format(task?.taskDate?.toDate(), 'P')}</p>
+                  <p className="col-span-2 py-3 border-r border-white border-opacity-25 text-center text-sm h-full">
+                    {!!task?.taskDate ? format(task?.taskDate?.toDate(), 'P') : 'Unscheduled task'}
+                  </p>
                   <p className="text-sm ml-10">{task?.selectedEmployee?.username || 'Name'}</p>
                 </div>
               </Link>
@@ -330,9 +332,11 @@ const Tasks = () => {
                       </div>
                     </Listbox>
                     <div className="col-span-1 py-3 border-r border-white border-opacity-25 h-full">
-                      <FlagIcon className={`h-5 w-5 mx-auto ${task?.flagSelected?.color}`} />
+                      <FlagIcon className={`h-5 w-5 mx-auto ${task?.priority?.color}`} />
                     </div>
-                    <p className="col-span-2 py-3 border-r border-white border-opacity-25 text-center text-sm h-full">{format(task?.taskDate?.toDate(), 'P')}</p>
+                    <p className="col-span-2 py-3 border-r border-white border-opacity-25 text-center text-sm h-full">
+                      {!!task?.taskDate ? format(task?.taskDate?.toDate(), 'P') : 'Unscheduled task'}
+                    </p>
                     <p className="text-sm ml-10">{task?.selectedEmployee?.username || 'Name'}</p>
                   </div>
                 </Link>

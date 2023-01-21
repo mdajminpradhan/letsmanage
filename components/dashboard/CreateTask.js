@@ -46,10 +46,10 @@ const priorities = [
 
 const CreateTask = ({ isOpen, setIsOpen }) => {
   const [selectedSpace, setSelectedSpace] = useState([]);
-  const [selectedUser, setSelectedUser] = useState([]);
+  const [selectedUser, setSelectedUser] = useState('');
   const [flagSelected, setFlagSelected] = useState('');
   const [subTasks, setSubTasks] = useState([]);
-  const [taskDate, setTaskDate] = useState(new Date());
+  const [taskDate, setTaskDate] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   // router
@@ -84,16 +84,16 @@ const CreateTask = ({ isOpen, setIsOpen }) => {
   const createTask = async (formdata) => {
     setIsLoading(true);
 
-    if (selectedUser === [] && flagSelected === '' && subTasks === []) {
+    if (selectedUser === '' && flagSelected === '') {
       toast.error('Please all the fields');
       return;
     }
 
     // extending formdata
     formdata.selectedSpace = doc(getFirestore(), 'spaces', selectedSpace.id);
-    formdata.flagSelected = flagSelected;
+    formdata.priority = flagSelected;
     formdata.subTasks = subTasks;
-    formdata.taskDate = format(taskDate, 'dd/MM/yyyy');
+    !!taskDate ? (formdata.taskDate = format(taskDate, 'dd/MM/yyyy')) : taskDate;
     formdata.status = 'To Do';
     formdata.selectedEmployeeId = selectedUser?.id;
     formdata.selectedEmployeeName = selectedUser?.name;
@@ -321,7 +321,10 @@ const CreateTask = ({ isOpen, setIsOpen }) => {
                           {flagSelected == '' ? (
                             <FlagIcon className="h-8 w-8 mx-auto fill-gray-400 p-1.5 rounded-full border border-white border-dashed border-opacity-30 text-xs" />
                           ) : (
-                            <FlagIcon className={`h-8 w-8 mx-auto p-1.5 cursor-pointer border border-transparent border-dashed ${flagSelected?.color}`} onClick={() => setFlagSelected('')} />
+                            <FlagIcon
+                              className={`h-8 w-8 mx-auto p-1.5 cursor-pointer border border-transparent border-dashed ${flagSelected?.color}`}
+                              onClick={() => setFlagSelected('')}
+                            />
                           )}
                         </Listbox.Button>
                         <Transition as={Fragment} leave="transition ease-in duration-100" leaveFrom="opacity-100" leaveTo="opacity-0">
@@ -349,6 +352,7 @@ const CreateTask = ({ isOpen, setIsOpen }) => {
                         className="bg-transparent relative -top-1 cursor-pointer focus:ring-0 outline-none ml-2 text-sm"
                         title="Start date"
                         dateFormat="dd/MM/yyyy"
+                        placeholderText="Task date"
                       />
                     </div>
                   </div>
