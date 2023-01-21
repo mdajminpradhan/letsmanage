@@ -7,6 +7,7 @@ import WithAuthentication from '@/utils/WithAuthentication';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import { toast } from 'react-hot-toast';
 
 const schema = yup
   .object()
@@ -42,7 +43,9 @@ const Login = () => {
     try {
       await signInWithEmailAndPassword(getAuth(), formdata.email, formdata.password);
     } catch (error) {
-      console.log(error);
+      console.log(error.message);
+
+      error.message === 'Firebase: Error (auth/wrong-password).' && toast.error('Login details are incorrect...');
       setIsLoading(false);
     }
 
@@ -96,7 +99,9 @@ const Login = () => {
             />
           </div>
 
-          <a className="mb-6 text-gray-200 hover:text-white cursor-pointer">Forgot password?</a>
+          <Link href="/reset" legacyBehavior>
+            <a className="mb-6 text-gray-200 hover:text-white cursor-pointer">Forgot password?</a>
+          </Link>
 
           <div className="flex justify-center w-full mt-6">
             <button type={isLoading === true ? 'button' : 'submit'} className="bg-primary hover:bg-hoverPrimary px-4 py-2 w-full font-medium rounded-xl text-white">

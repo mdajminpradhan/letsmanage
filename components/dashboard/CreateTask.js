@@ -1,5 +1,5 @@
 import { Dialog, Transition, Listbox } from '@headlessui/react';
-import TransitionChild from './TransitionChild';
+import TransitionChild from '../common/TransitionChild';
 import { Fragment, useEffect, useState } from 'react';
 import { CalendarDaysIcon, CheckIcon, ChevronUpDownIcon, FlagIcon, PlusSmallIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { TrashIcon, UserGroupIcon } from '@heroicons/react/24/outline';
@@ -12,6 +12,8 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { toast } from 'react-hot-toast';
+import { useRouter } from 'next/router';
+import { format } from 'date-fns';
 
 const schema = yup
   .object()
@@ -48,8 +50,10 @@ const CreateTask = ({ isOpen, setIsOpen }) => {
   const [flagSelected, setFlagSelected] = useState('');
   const [subTasks, setSubTasks] = useState([]);
   const [taskDate, setTaskDate] = useState(new Date());
-
   const [isLoading, setIsLoading] = useState(false);
+
+  // router
+  const { push } = useRouter();
 
   const {
     register,
@@ -80,17 +84,24 @@ const CreateTask = ({ isOpen, setIsOpen }) => {
   const createTask = async (formdata) => {
     setIsLoading(true);
 
+    if (selectedUser === [] && flagSelected === '' && subTasks === []) {
+      toast.error('Please all the fields');
+      return;
+    }
+
     // extending formdata
     formdata.selectedSpace = doc(getFirestore(), 'spaces', selectedSpace.id);
-    formdata.selectedUser = doc(getFirestore(), 'spaces', selectedUser.id);
     formdata.flagSelected = flagSelected;
     formdata.subTasks = subTasks;
-    formdata.taskDate = taskDate;
+    formdata.taskDate = format(taskDate, 'dd/MM/yyyy');
     formdata.status = 'To Do';
+    formdata.selectedEmployeeId = selectedUser?.id;
+    formdata.selectedEmployeeName = selectedUser?.name;
 
     try {
-      await addDoc(collection(getFirestore(), `spaces/${selectedSpace.id}/tasks`), formdata);
+      const record = await addDoc(collection(getFirestore(), `spaces/${selectedSpace.id}/tasks`), formdata);
 
+      push(`/tasks/${selectedSpace.id}?taskId=${record.id}`);
       setIsOpen(false);
       setIsLoading(false);
       setSelectedSpace([]);
@@ -310,15 +321,15 @@ const CreateTask = ({ isOpen, setIsOpen }) => {
                           {flagSelected == '' ? (
                             <FlagIcon className="h-8 w-8 mx-auto fill-gray-400 p-1.5 rounded-full border border-white border-dashed border-opacity-30 text-xs" />
                           ) : (
-                            <FlagIcon className="h-8 w-8 mx-auto fill-third p-1.5 cursor-pointer  border border-transparent border-dashed " onClick={() => setFlagSelected('')} />
+                            <FlagIcon className={`h-8 w-8 mx-auto p-1.5 cursor-pointer border border-transparent border-dashed ${flagSelected?.color}`} onClick={() => setFlagSelected('')} />
                           )}
                         </Listbox.Button>
                         <Transition as={Fragment} leave="transition ease-in duration-100" leaveFrom="opacity-100" leaveTo="opacity-0">
-                          <Listbox.Options className="absolute z-20 bottom-1 mt-1 py-2 h-48 w-44 overflow-y-scroll rounded-md bg-gray-800 shadow-lg ring-0 focus:outline-none sm:text-sm px-2">
+                          <Listbox.Options className="absolute z-20 bottom-1 pt-2.5 mt-1 h-auto w-44 overflow-y-scroll rounded-md bg-gray-800 shadow-lg ring-0 focus:outline-none sm:text-sm">
                             {priorities.map((priority, index) => (
                               <Listbox.Option
                                 key={index}
-                                className={({ active }) => `flex items-center relative cursor-pointer select-none py-2 pl-3 pr-2 mb-2 rounded-md p ${active ? 'bg-gray-900' : ''}`}
+                                className={({ active }) => `flex items-center relative cursor-pointer select-none py-2 pl-3 pr-2 mb-2 ${active ? 'bg-gray-900' : ''}`}
                                 value={priority}
                               >
                                 <FlagIcon className={`h-5 w-5 ${priority.color}`} />
@@ -337,6 +348,7 @@ const CreateTask = ({ isOpen, setIsOpen }) => {
                         onChange={(date) => setTaskDate(date)}
                         className="bg-transparent relative -top-1 cursor-pointer focus:ring-0 outline-none ml-2 text-sm"
                         title="Start date"
+                        dateFormat="dd/MM/yyyy"
                       />
                     </div>
                   </div>

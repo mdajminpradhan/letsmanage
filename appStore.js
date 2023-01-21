@@ -24,6 +24,12 @@ const useAppStore = create((set) => ({
     set(() => ({
       users: val
     }));
+  },
+  userData: [],
+  setUserData: (val) => {
+    set(() => ({
+      userData: val
+    }));
   }
 }));
 

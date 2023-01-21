@@ -3,6 +3,7 @@
   "rules": {
     "no-unused-vars": "error",
     "no-duplicate-imports": "error",
-    "no-undef": "error"
+    "no-undef": "error",
+    "prefer-const": "error"
   }
 }

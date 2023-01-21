@@ -3,10 +3,11 @@ import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
-import { doc, getFirestore, setDoc } from 'firebase/firestore';
-import { CheckIcon, XMarkIcon } from '@heroicons/react/24/solid';
+import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
+import { collection, doc, getFirestore, onSnapshot, query, setDoc } from 'firebase/firestore';
+import { XMarkIcon } from '@heroicons/react/24/solid';
 import WithAuthentication from '@/utils/WithAuthentication';
+import { toast } from 'react-hot-toast';
 
 const schema = yup
   .object()
@@ -14,14 +15,15 @@ const schema = yup
     username: yup.string().required(),
     name: yup.string().required(),
     email: yup.string().required(),
-    password: yup.string().required()
+    password: yup.string().required(),
+    department: yup.string().required()
   })
   .required();
 
 const CreateAccount = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
   const [isErrors, setIsErrors] = useState('');
+  const [spaces, setSpaces] = useState([]);
 
   const {
     register,
@@ -33,6 +35,24 @@ const CreateAccount = () => {
     resolver: yupResolver(schema)
   });
 
+  // getting all spaces
+  useEffect(() => {
+    (async () => {
+      const q = query(collection(getFirestore(), 'spaces'));
+
+      onSnapshot(q, (querySnapshot) => {
+        const records = [];
+        querySnapshot.forEach((doc) => {
+          const record = doc.data();
+          record.id = doc.id;
+
+          records.push(record);
+        });
+        setSpaces(records);
+      });
+    })();
+  }, []);
+
   // create a new account
   const createAccount = async (formdata) => {
     setIsLoading(true);
@@ -42,6 +62,7 @@ const CreateAccount = () => {
     // creating new account
     try {
       user = await createUserWithEmailAndPassword(getAuth(), formdata.email, formdata.password);
+      await sendEmailVerification(getAuth().currentUser);
     } catch (error) {
       console.log(error);
       setIsLoading(false);
@@ -51,15 +72,15 @@ const CreateAccount = () => {
     delete formdata.password;
 
     formdata.role = 'User';
-    formdata.status = 'approved';
+    formdata.status = 'joined';
+    formdata.department = formdata.department.name;
+    formdata.departmentId = formdata.department.id;
 
     try {
       await setDoc(doc(getFirestore(), 'users', user?.user?.uid), formdata);
 
-      setSuccess(true);
+      toast.success('Please click the verification link sent to you to verify your email...');
       setIsLoading(false);
-
-      // emptying the form
       reset();
     } catch (error) {
       console.log(error);
@@ -136,6 +157,23 @@ const CreateAccount = () => {
               placeholder="Enter your password"
             />
           </div>
+          <div className="mb-2">
+            <label htmlFor="email" className="text-white mb-1.5 block">
+              Deparment
+            </label>
+            <select
+              className="text-sm px-4 py-1.5 rounded-lg border border-white border-opacity-30 text-white focus:ring-0 outline-none ring-blue-400 w-full bg-transparent capitalize"
+              required
+              {...register('department')}
+            >
+              <option value="">Select a department</option>
+              {spaces?.map((space, index) => (
+                <option value={space} key={index}>
+                  {space.name}
+                </option>
+              ))}
+            </select>
+          </div>
 
           <Link href="/login" legacyBehavior>
             <a className="text-gray-200 hover:text-white mb-8 block">Already have an account?</a>
@@ -151,13 +189,6 @@ const CreateAccount = () => {
             <div className="flex items-center mt-2">
               <XMarkIcon className="h-5 w-5 stroke-red-400" />
               <p className="text-white">Looks like email already exist</p>
-            </div>
-          )}
-
-          {!!success && (
-            <div className="flex items-center mt-2">
-              <CheckIcon className="h-5 w-5 text-white" />
-              <p className="text-white">Your account have been created successfully</p>
             </div>
           )}
         </form>

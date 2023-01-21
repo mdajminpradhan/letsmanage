@@ -1,6 +1,6 @@
 import { useState, useEffect, Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
-import TransitionChild from './TransitionChild';
+import TransitionChild from 'components/common/TransitionChild';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
