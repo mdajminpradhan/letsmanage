@@ -14,10 +14,11 @@ const LayoutLeft = () => {
   const [isDeleting, setIsDeleting] = useState(false);
 
   // app global store
-  const { isCreateSpaceOpen, setIsCreateSpaceOpen, spaces } = useAppStore((state) => ({
+  const { isCreateSpaceOpen, setIsCreateSpaceOpen, spaces, userData } = useAppStore((state) => ({
     isCreateSpaceOpen: state.isCreateSpaceOpen,
     setIsCreateSpaceOpen: state.setIsCreateSpaceOpen,
-    spaces: state.spaces
+    spaces: state.spaces,
+    userData: state.userData
   }));
 
   useEffect(() => {
@@ -103,15 +104,17 @@ const LayoutLeft = () => {
           )}
         </ul>
 
-        {/* dashboard link goes here */}
-        <Link href="/users" legacyBehavior>
-          <div className="flex items-center px-4 py-1 mt-6 cursor-pointer hover:bg-amrblue hover:bg-opacity-20">
-            <div className="h-8 w-8 relative">
-              <Image src="/assets/icons/users.png" alt="Picture of the author" fill />
+        {/* users link goes here */}
+        {userData?.role === 'Admin' && (
+          <Link href="/users" legacyBehavior>
+            <div className="flex items-center px-4 py-1 mt-6 cursor-pointer hover:bg-amrblue hover:bg-opacity-20">
+              <div className="h-8 w-8 relative">
+                <Image src="/assets/icons/users.png" alt="Picture of the author" fill />
+              </div>
+              <a className="w-full ml-2">Users</a>
             </div>
-            <a className="w-full ml-2">Users</a>
-          </div>
-        </Link>
+          </Link>
+        )}
       </div>
       <CreateSpace
         isOpen={isOpen}

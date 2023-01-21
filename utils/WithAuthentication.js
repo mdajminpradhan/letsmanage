@@ -37,7 +37,7 @@ const WithAuthentication = ({ children }) => {
 
   // allowed pages
   const onlyForLoggedInUser = ['/', '/tasks', '/tasks/[uuid]'];
-  const onlyForLoggedInTeamLeaders = ['/createaccount', '/login', '/invite'];
+  const onlyForLoggedInTeamLeaders = ['/', '/tasks', '/tasks/[uuid]'];
 
   if (isAuthenticated === false) {
     if (pathname === '/login' || pathname === '/createaccount' || pathname === '/reset' || pathname === '/invite') {
@@ -59,7 +59,7 @@ const WithAuthentication = ({ children }) => {
   if (!!isAuthenticated && !!isUserVerified && userData?.role !== 'joined') {
     if (userData?.role === 'Admin') {
       return children;
-    } else if (userData?.role === 'TeamLeader') {
+    } else if (userData?.role === 'Team Leader') {
       if (onlyForLoggedInTeamLeaders.includes(pathname) === true) {
         return children;
       } else {

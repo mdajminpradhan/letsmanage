@@ -174,19 +174,18 @@ const Layout = ({ titleFromChild = '', children }) => {
                       <p>{userData?.name?.substring(0, 15) + '...'}</p>
                       <p className="text-xs">{userData?.email?.substring(0, 20) + '...'}</p>
                     </div>
-                    {/* {userData?.role !== 'User' && ( */}
-                    {/* //TODO: uncoment the logic */}
-                    <>
-                      <Menu.Item>
-                        <button className={`group flex w-full items-center rounded-md px-4 py-2 text-sm`}>Profile</button>
-                      </Menu.Item>
-                      <Menu.Item>
-                        <button className={`group flex w-full items-center rounded-md px-4 py-2 text-sm`} onClick={() => setIsCopyInviteOpen(true)}>
-                          Invite
-                        </button>
-                      </Menu.Item>
-                    </>
-                    {/* )} */}
+                    {userData?.role !== 'User' && (
+                      <>
+                        <Menu.Item>
+                          <button className={`group flex w-full items-center rounded-md px-4 py-2 text-sm`}>Profile</button>
+                        </Menu.Item>
+                        <Menu.Item>
+                          <button className={`group flex w-full items-center rounded-md px-4 py-2 text-sm`} onClick={() => setIsCopyInviteOpen(true)}>
+                            Invite
+                          </button>
+                        </Menu.Item>
+                      </>
+                    )}
                     <Menu.Item>
                       <button className={`group flex w-full items-center rounded-md px-4 py-2 text-sm`} onClick={() => setIsShortcusOpen(true)}>
                         Shortcuts

@@ -56,10 +56,8 @@ const Users = () => {
     }
   };
 
-  const roles = ['Admin', 'Editor', 'User'];
+  const roles = ['Admin', 'Team Leader', 'User'];
   const statuses = ['approved', 'pending', 'joined'];
-
-  console.log(selectedStatus, users);
 
   return (
     <Layout titleFromChild="Users">
@@ -126,7 +124,6 @@ const Users = () => {
           users.map((user, index) =>
             selectedStatus === 'All Users' ? (
               <div className="grid grid-cols-12 items-center border-b border-white border-opacity-25 pl-8 pr-1 hover:bg-amrblue hover:bg-opacity-10 cursor-pointer" key={index}>
-                {console.log('hey')}
                 <p className="col-span-3 py-3 border-r border-white border-opacity-25 text-sm">{user.email || 'Email'}</p>
                 <p className="col-span-2 py-3 border-r border-white border-opacity-25 text-center text-sm">{user.username || 'Username'}</p>
                 <Listbox value={user.status} onChange={(s) => handleUpdate({ status: s }, user)}>
@@ -163,7 +160,7 @@ const Users = () => {
                 </Listbox>
                 <Listbox value={user.role} onChange={(r) => handleUpdate({ role: r }, user)}>
                   <div className="relative ml-2 col-span-2 h-full grid place-content-center border-r border-white border-opacity-25">
-                    <Listbox.Button className="relative w-24 mx-auto cursor-pointer rounded-full border border-white border-opacity-10 text-xs pl-2.5 py-1.5 pr-8 focus:outline-none focus:ring-0">
+                    <Listbox.Button className="relative w-32 mx-auto cursor-pointer rounded-full border border-white border-opacity-10 text-xs pl-2.5 py-1.5 pr-8 focus:outline-none focus:ring-0">
                       <span className="rounded-full text-xs inline-block">{user.role}</span>
                       <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                         <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
@@ -209,8 +206,6 @@ const Users = () => {
               </div>
             ) : user.status == selectedStatus && (
               <div className="grid grid-cols-12 items-center border-b border-white border-opacity-25 pl-8 pr-1 hover:bg-amrblue hover:bg-opacity-10 cursor-pointer" key={index}>
-                {console.log(user.status===selectedStatus)}
-
                 <p className="col-span-3 py-3 border-r border-white border-opacity-25 text-sm">{user.email || 'Email'}</p>
                 <p className="col-span-2 py-3 border-r border-white border-opacity-25 text-center text-sm">{user.username || 'Username'}</p>
                 <Listbox value={user.status} onChange={(s) => handleUpdate({ status: s }, user)}>
