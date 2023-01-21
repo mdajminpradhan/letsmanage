@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
-import { collection, doc, getDocs, getFirestore, query, setDoc, where } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDocs, getFirestore, query, setDoc, where } from 'firebase/firestore';
 import { XMarkIcon } from '@heroicons/react/24/solid';
 import WithAuthentication from '@/utils/WithAuthentication';
 import { toast } from 'react-hot-toast';
@@ -25,6 +25,7 @@ const Invite = () => {
   const [isErrors, setIsErrors] = useState('');
   const [step, setStep] = useState(1);
   const [isInvitationLinkValid, setIsInvitationLinkValid] = useState('');
+  const [invitationId, setInvitationId] = useState('');
 
   const {
     register,
@@ -53,6 +54,9 @@ const Invite = () => {
           } else {
             setIsInvitationLinkValid(false);
           }
+
+          // storing id
+          snap.forEach((i) => setInvitationId(i));
         })();
       } else {
         setIsInvitationLinkValid(false);
@@ -92,6 +96,13 @@ const Invite = () => {
       console.log(error);
       setIsLoading(false);
       setIsErrors(error);
+    }
+
+    // deleting existing invitation
+    try {
+      await deleteDoc(doc(getFirestore(), 'invitations', invitationId));
+    } catch (error) {
+      console.log(error);
     }
   };
 

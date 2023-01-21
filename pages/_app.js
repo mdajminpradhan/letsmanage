@@ -7,19 +7,22 @@ import { Toaster } from 'react-hot-toast';
 
 const App = ({ Component, pageProps }) => {
   // app global store
-  const { isCreateSpaceOpen, setIsCreateSpaceOpen, isCreateTaskOpen, setIsCreateTaskOpen } = useAppStore((state) => ({
+  const { isCreateSpaceOpen, setIsCreateSpaceOpen, isCreateTaskOpen, setIsCreateTaskOpen, userData } = useAppStore((state) => ({
     isCreateSpaceOpen: state.isCreateSpaceOpen,
     setIsCreateSpaceOpen: state.setIsCreateSpaceOpen,
     isCreateTaskOpen: state.isCreateTaskOpen,
-    setIsCreateTaskOpen: state.setIsCreateTaskOpen
+    setIsCreateTaskOpen: state.setIsCreateTaskOpen,
+    userData: state.userData
   }));
 
   useEffect(() => {
     const createSpacePopUp = (event) => {
-      if (event.keyCode === 67 && isCreateTaskOpen === false) {
-        setIsCreateSpaceOpen(true);
-      } else if (event.keyCode === 84 && isCreateSpaceOpen === false) {
-        setIsCreateTaskOpen(true);
+      if (userData?.role !== 'User') {
+        if (event.keyCode === 67 && isCreateTaskOpen === false) {
+          setIsCreateSpaceOpen(true);
+        } else if (event.keyCode === 84 && isCreateSpaceOpen === false) {
+          setIsCreateTaskOpen(true);
+        }
       }
     };
     window.addEventListener('keydown', createSpacePopUp);

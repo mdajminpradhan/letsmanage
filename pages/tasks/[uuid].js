@@ -20,7 +20,7 @@ const Tasks = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   // router
-  const { query: query, push } = useRouter();
+  const { query: query, push, pathname } = useRouter();
 
   // app global store
   const { userData } = useAppStore((state) => ({
@@ -47,6 +47,8 @@ const Tasks = () => {
         : push('/');
     }
   }, [query]);
+
+  console.log(pathname);
 
   // deleting task
   const handleDelete = async () => {

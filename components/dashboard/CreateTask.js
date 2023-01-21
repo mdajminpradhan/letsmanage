@@ -23,8 +23,6 @@ const schema = yup
   })
   .required();
 
-// const people = [{ name: 'Wade Cooper' }, { name: 'Arlene Mccoy' }, { name: 'Devon Webb' }, { name: 'Tom Cook' }, { name: 'Tanya Fox' }, { name: 'Hellen Schmidt' }];
-
 const priorities = [
   {
     value: 'Urgent',
@@ -93,7 +91,7 @@ const CreateTask = ({ isOpen, setIsOpen }) => {
     formdata.selectedSpace = doc(getFirestore(), 'spaces', selectedSpace.id);
     formdata.priority = flagSelected;
     formdata.subTasks = subTasks;
-    !!taskDate ? (formdata.taskDate = format(taskDate, 'dd/MM/yyyy')) : taskDate;
+    !!taskDate ? (formdata.taskDate = format(taskDate, 'dd/MM/yyyy')) : (formdata.taskDate = taskDate);
     formdata.status = 'To Do';
     formdata.selectedEmployeeId = selectedUser?.id;
     formdata.selectedEmployeeName = selectedUser?.name;
@@ -118,9 +116,7 @@ const CreateTask = ({ isOpen, setIsOpen }) => {
       setIsLoading(false);
 
       // showing toast
-      toast('Good Job!', {
-        icon: '👏'
-      });
+      toast.error('Failed to create task');
     }
   };
 
