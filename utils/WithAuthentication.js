@@ -35,8 +35,12 @@ const WithAuthentication = ({ children }) => {
     });
   }, []);
 
+  // allowed pages
+  const onlyForLoggedInUser = ['/', '/tasks', '/tasks/[uuid]'];
+  const onlyForLoggedInTeamLeaders = ['/createaccount', '/login', '/invite'];
+
   if (isAuthenticated === false) {
-    if (pathname === '/login' || pathname === '/createaccount' || pathname === '/reset') {
+    if (pathname === '/login' || pathname === '/createaccount' || pathname === '/reset' || pathname === '/invite') {
       return children;
     } else {
       push('/login');
@@ -51,38 +55,34 @@ const WithAuthentication = ({ children }) => {
     );
   }
 
-  if (isAuthenticated === true) {
-    if (isUserVerified === true) {
-      if (pathname === '/login' || pathname === '/createaccount' || pathname === '/invite') {
-        push('/');
-      } else {
-        if (userData?.role !== 'User') {
-          return children;
-        } else {
-          if (pathname === '/' || pathname === '/tasks' || pathname === '/tasks/[uuid]') {
-            if (userData?.status === 'joined' && userData?.status === 'pending') {
-              push('/request');
-            } else {
-              return children;
-            }
-            return children;
-          } else if (pathname === '/request') {
-            if (userData?.status === 'joined' && userData?.status === 'pending') {
-              return children;
-            } else {
-              push('/');
-            }
-          } else {
-            push('/');
-          }
-        }
-      }
-    } else {
-      if (pathname === '/login' || pathname === '/createaccount' || pathname === '/invite') {
+  // new login
+  if (!!isAuthenticated && !!isUserVerified && userData?.role !== 'joined') {
+    if (userData?.role === 'Admin') {
+      return children;
+    } else if (userData?.role === 'TeamLeader') {
+      if (onlyForLoggedInTeamLeaders.includes(pathname) === true) {
         return children;
       } else {
-        push('/login');
+        push('/');
       }
+    } else if (userData?.role === 'User') {
+      if (onlyForLoggedInUser.includes(pathname) === true) {
+        return children;
+      } else {
+        push('/');
+      }
+    }
+  } else if (!!isAuthenticated && !!isUserVerified && userData?.role === 'joined') {
+    if (pathname === '/request') {
+      return children;
+    } else {
+      push('/request');
+    }
+  } else if (!!isAuthenticated && isUserVerified === false) {
+    if (pathname === '/login') {
+      return children;
+    } else {
+      push('/login');
     }
   }
 };

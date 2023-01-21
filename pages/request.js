@@ -27,8 +27,6 @@ const Request = () => {
     }
   };
 
-  console.log(userData);
-
   return (
     <WithAuthentication>
       <div className="grid place-content-center bg-silent bg-no-repeat bg-cover h-screen w-screen">

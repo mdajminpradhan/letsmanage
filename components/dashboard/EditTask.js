@@ -105,8 +105,6 @@ const EditTask = ({ isOpen, setIsOpen, task, spaceId, taskId }) => {
     }
   }, [spaces]);
 
-  console.log(spaceId, taskId);
-
   // updateTask task
   const updateTask = async (formdata) => {
     setIsLoading(true);
