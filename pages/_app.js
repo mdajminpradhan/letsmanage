@@ -18,7 +18,7 @@ const App = ({ Component, pageProps }) => {
   useEffect(() => {
     const createSpacePopUp = (event) => {
       if (userData?.role !== 'User') {
-        if (event.keyCode === 67 && isCreateTaskOpen === false) {
+        if (event.keyCode === 67 && isCreateTaskOpen === false && userData?.role === 'Admin') {
           setIsCreateSpaceOpen(true);
         } else if (event.keyCode === 84 && isCreateSpaceOpen === false) {
           setIsCreateTaskOpen(true);
