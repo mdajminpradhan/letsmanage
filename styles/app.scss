@@ -39,3 +39,16 @@ body {
 .react-datepicker-wrapper {
     width: 100px !important;
 }
+
+// media query
+@media only screen and (max-width: 1024px) {
+    .app-layout {
+        grid-template-columns: .35fr 1fr !important;
+    }
+}
+
+@media only screen and (max-width: 767px) {
+    .app-layout {
+        grid-template-columns: 1fr !important;
+    }
+}

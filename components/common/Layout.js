@@ -111,7 +111,7 @@ const Layout = ({ titleFromChild = '', children }) => {
     <WithAuthentication>
       <section className={`h-screen overflow-hidden bg-silent bg-no-repeat bg-cover ${userData?.role !== 'User' ? 'app-layout' : ''}`}>
         {userData?.role !== 'User' && (
-          <section>
+          <section className='hidden md:block'>
             <LayoutLeft />
           </section>
         )}
@@ -135,7 +135,7 @@ const Layout = ({ titleFromChild = '', children }) => {
                 <Link href={`/tasks?spaceId=${userData?.departmentId}`} legacyBehavior>
                   <a className="pl-11 hidden sm:flex items-center mt-1">
                     <span className="bg-secondary h-1.5 w-1.5 rounded-full block mr-2"></span>
-                    <span>{userData?.department || 'Department name'}</span>
+                    <span>{userData?.departmentName || 'Department name'}</span>
                   </a>
                 </Link>
               </div>

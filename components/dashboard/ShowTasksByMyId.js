@@ -90,40 +90,42 @@ const ShowTasksByMyId = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-12 w-11/12 overflow-scroll px-8 mx-auto">
-        <p className="col-span-4 font-medium">Title</p>
-        <p className="col-span-3 text-center font-medium">Status</p>
-        <p className="col-span-1 text-center font-medium">Priority</p>
-        <p className="col-span-2 text-center font-medium">Deadline</p>
-        <p className="col-span-2 text-center font-medium">Assigns</p>
-      </div>
-      <div className="w-11/12 px-auto mx-auto bg-amrblue bg-opacity-10 mt-3 rounded-sm h-[550px] overflow-scroll scrollbar-thin">
-        {isLoading === true ? (
-          <Skeleton count={10} baseColor="#09387a" />
-        ) : tasks?.length > 0 ? (
-          tasks.map((task, index) => (
-            <Link href={`/tasks/${routerQuery.spaceId}?taskId=${task.id}`} key={index}>
-              <div className="grid grid-cols-12 items-center border-b border-white border-opacity-25 pl-8 pr-2 hover:bg-amrblue hover:bg-opacity-10 cursor-pointer">
-                <p className="col-span-4 py-3 border-r border-white border-opacity-25 text-sm">{task?.name || 'Task title'}</p>
+      <div className={`w-11/12 px-8 mx-auto overflow-x-scroll`}>
+        <div className="grid grid-cols-12 w-[850px] lg:w-[1150px] xl:w-[1250px] 2xl:w-[1500px]">
+          <p className="col-span-4 font-medium">Title</p>
+          <p className="col-span-3 text-center font-medium">Status</p>
+          <p className="col-span-1 text-center font-medium">Priority</p>
+          <p className="col-span-2 text-center font-medium">Deadline</p>
+          <p className="col-span-2 text-center font-medium">Assigns</p>
+        </div>
+        <div className="w-[850px] lg:w-[1150px] xl:w-[1250px] 2xl:w-[1500px] bg-amrblue bg-opacity-10 mt-3 rounded-sm h-[550px] scrollbar-thin">
+          {isLoading === true ? (
+            <Skeleton count={10} baseColor="#09387a" />
+          ) : tasks?.length > 0 ? (
+            tasks.map((task, index) => (
+              <Link href={`/tasks/${routerQuery.spaceId}?taskId=${task.id}`} key={index}>
+                <div className="grid grid-cols-12 items-center border-b border-white border-opacity-25 pl-8 pr-2 hover:bg-amrblue hover:bg-opacity-10 cursor-pointer">
+                  <p className="col-span-4 py-3 border-r border-white border-opacity-25 text-sm">{task?.name || 'Task title'}</p>
 
-                <div className="col-span-3 h-full border-r border-white border-opacity-25 grid place-content-center">
-                  <p className="bg-amrblue bg-opacity-25 rounded-full px-3 py-1.5 text-center text-sm w-24 mx-auto">
-                    {task?.status || 'Task status'}
+                  <div className="col-span-3 h-full border-r border-white border-opacity-25 grid place-content-center">
+                    <p className="bg-amrblue bg-opacity-25 rounded-full px-3 py-1.5 text-center text-sm w-24 mx-auto">
+                      {task?.status || 'Task status'}
+                    </p>
+                  </div>
+                  <div className="col-span-1 py-3 border-r border-white border-opacity-25 h-full">
+                    <FlagIcon className={`h-5 w-5 mx-auto ${task?.priority?.color}`} />
+                  </div>
+                  <p className="col-span-2 py-3 border-r border-white border-opacity-25 text-center text-sm h-full">
+                    {!!task?.taskDate ? task?.taskDate : 'Unscheduled task'}
                   </p>
+                  <p className="text-sm ml-10">{task?.selectedEmployee?.username || 'Name'}</p>
                 </div>
-                <div className="col-span-1 py-3 border-r border-white border-opacity-25 h-full">
-                  <FlagIcon className={`h-5 w-5 mx-auto ${task?.priority?.color}`} />
-                </div>
-                <p className="col-span-2 py-3 border-r border-white border-opacity-25 text-center text-sm h-full">
-                  {!!task?.taskDate ? task?.taskDate : 'Unscheduled task'}
-                </p>
-                <p className="text-sm ml-10">{task?.selectedEmployee?.username || 'Name'}</p>
-              </div>
-            </Link>
-          ))
-        ) : (
-          <p className="p-44 w-full mx-auto text-center text-lg">No tasks found...</p>
-        )}
+              </Link>
+            ))
+          ) : (
+            <p className="p-44 w-full mx-auto text-center text-lg">No tasks found...</p>
+          )}
+        </div>
       </div>
     </>
   );
