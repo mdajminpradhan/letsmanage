@@ -142,7 +142,7 @@ const Home = () => {
 
   return (
     <Layout titleFromChild="Dashboard">
-      <div className="w-11/12 mx-auto px-8 pt-10">
+      <div className="w-11/12 mx-auto sm:px-8 pt-10">
         <p className="text-lg mb-4 font-medium">My Tasks</p>
         <div className="max-w-3xl rounded-2xl">
           <div className="mb-4 block">

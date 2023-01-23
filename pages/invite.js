@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
-import { collection, deleteDoc, doc, getDocs, getFirestore, query, setDoc, where } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDocs, getFirestore, onSnapshot, query, setDoc, where } from 'firebase/firestore';
 import { XMarkIcon } from '@heroicons/react/24/solid';
 import WithAuthentication from '@/utils/WithAuthentication';
 import { toast } from 'react-hot-toast';
@@ -26,6 +26,7 @@ const Invite = () => {
   const [step, setStep] = useState(1);
   const [isInvitationLinkValid, setIsInvitationLinkValid] = useState('');
   const [invitationId, setInvitationId] = useState('');
+  const [spaces, setSpaces] = useState([]);
 
   const {
     register,
@@ -39,6 +40,24 @@ const Invite = () => {
 
   // router
   const { query: routerQuery, push } = useRouter();
+
+  // getting all spaces
+  useEffect(() => {
+    (async () => {
+      const q = query(collection(getFirestore(), 'spaces'));
+
+      onSnapshot(q, (querySnapshot) => {
+        const records = [];
+        querySnapshot.forEach((doc) => {
+          const record = doc.data();
+          record.id = doc.id;
+
+          records.push(record);
+        });
+        setSpaces(records);
+      });
+    })();
+  }, []);
 
   // getting all tasks
   useEffect(() => {
@@ -127,11 +146,14 @@ const Invite = () => {
               </div>
             </div>
           ) : step === 2 ? (
-            <form onSubmit={handleSubmit(createAccount)} className="bg-[#D9D9D9] bg-opacity-5 border border-white border-opacity-10 rounded-xl w-[550px] px-10 py-10">
-              <h2 className="text-2xl text-white">Let&apos;s Manage</h2>
-              <p className="text-white mb-8">Let&apos;s manage the amazing team</p>
+            <form
+              onSubmit={handleSubmit(createAccount)}
+              className="bg-[#D9D9D9] bg-opacity-5 border border-white border-opacity-10 rounded-xl w-72 sm:w-[550px] px-5 sm:px-10 py-10"
+            >
+              <h2 className="text-xl sm:text-2xl text-white">Let&apos;s Manage</h2>
+              <p className="text-white text-sm sm:text-base mb-8">Let&apos;s manage the amazing team</p>
               <div className="mb-4">
-                <label htmlFor="email" className="text-white mb-1.5 block">
+                <label htmlFor="email" className="text-white  text-sm sm:text-base mb-1.5 block">
                   Username
                 </label>
                 <input
@@ -145,7 +167,7 @@ const Invite = () => {
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="email" className="text-white mb-1.5 block">
+                <label htmlFor="email" className="text-white  text-sm sm:text-base mb-1.5 block">
                   Name
                 </label>
                 <input
@@ -159,7 +181,7 @@ const Invite = () => {
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="email" className="text-white mb-1.5 block">
+                <label htmlFor="email" className="text-white  text-sm sm:text-base mb-1.5 block">
                   Email address
                 </label>
                 <input
@@ -173,7 +195,7 @@ const Invite = () => {
                 />
               </div>
               <div className="mb-2">
-                <label htmlFor="email" className="text-white mb-1.5 block">
+                <label htmlFor="email" className="text-white  text-sm sm:text-base mb-1.5 block">
                   Password
                 </label>
                 <input
@@ -186,13 +208,33 @@ const Invite = () => {
                   placeholder="Enter your password"
                 />
               </div>
+              <div className="mb-2">
+                <label htmlFor="email" className="text-white  text-sm sm:text-base mb-1.5 block">
+                  Deparment
+                </label>
+                <select
+                  className="text-sm px-4 py-1.5 rounded-lg border border-white border-opacity-30 text-white focus:ring-0 outline-none ring-blue-400 w-full bg-transparent capitalize"
+                  required
+                  {...register('department')}
+                >
+                  <option value="">Select a department</option>
+                  {spaces?.map((space, index) => (
+                    <option value={space} key={index}>
+                      {space.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
               <Link href="/login" legacyBehavior>
-                <a className="text-gray-200 hover:text-white mb-8 block">Already have an account?</a>
+                <a className="text-gray-200 text-sm sm:text-base hover:text-white mb-8 block">Already have an account?</a>
               </Link>
 
               <div className="flex justify-center w-full">
-                <button type={isLoading === true ? 'button' : 'submit'} className="bg-primary hover:bg-hoverPrimary px-4 py-2 w-full font-medium rounded-xl text-white">
+                <button
+                  type={isLoading === true ? 'button' : 'submit'}
+                  className="bg-primary hover:bg-hoverPrimary px-4 py-2 w-full font-medium rounded-xl text-white text-sm sm:text-base"
+                >
                   {isLoading === true ? 'Creating...' : 'Create Account'}
                 </button>
               </div>
@@ -200,7 +242,7 @@ const Invite = () => {
               {isErrors !== '' && (
                 <div className="flex items-center mt-2">
                   <XMarkIcon className="h-5 w-5 stroke-red-400" />
-                  <p className="text-white">Looks like email already exist</p>
+                  <p className="text-white text-sm sm:text-base">Looks like email already exist</p>
                 </div>
               )}
             </form>
