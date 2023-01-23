@@ -18,7 +18,6 @@ const schema = yup
     name: yup.string().required(),
     email: yup.string().required(),
     password: yup.string().required(),
-    department: yup.string().required(),
   })
   .required();
 
@@ -29,6 +28,7 @@ const Invite = () => {
   const [isInvitationLinkValid, setIsInvitationLinkValid] = useState('');
   const [invitationId, setInvitationId] = useState('');
   const [spaces, setSpaces] = useState([]);
+  const [selectedDepartment, setSelectedDepartment] = useState([]);
 
   const {
     register,
@@ -104,10 +104,8 @@ const Invite = () => {
 
     formdata.role = 'User';
     formdata.status = 'joined';
-    formdata.departmentName = JSON.parse(formdata.department)?.name;
-    formdata.departmentId = JSON.parse(formdata.department)?.id;
-
-    console.log(JSON.parse(formdata.department));
+    formdata.departmentName = JSON.parse(selectedDepartment)[0];
+    formdata.departmentId = JSON.parse(selectedDepartment)[1];
 
     try {
       await setDoc(doc(getFirestore(), 'users', user?.user?.uid), formdata);
@@ -235,11 +233,11 @@ const Invite = () => {
                   <select
                     className="text-sm px-4 py-1.5 rounded-lg border border-white border-opacity-30 text-white focus:ring-0 outline-none ring-blue-400 w-full bg-transparent capitalize"
                     required
-                    {...register('department')}
+                    onChange={(event) => setSelectedDepartment(event.target.value)}
                   >
                     <option value="">Select a department</option>
                     {spaces?.map((space, index) => (
-                      <option value={JSON.stringify({ name: space?.name, id: space?.id })} key={index}>
+                      <option value={JSON.stringify([space?.name, space?.id])} key={index}>
                         {space.name}
                       </option>
                     ))}
