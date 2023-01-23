@@ -25,12 +25,16 @@ const WithAuthentication = ({ children }) => {
         const docRef = doc(getFirestore(), 'users', user.uid);
         const snap = await getDoc(docRef);
 
-        const record = snap?.data();
-        record.id = snap?.id;
+        if (snap.exists()) {
+          const record = snap?.data();
+          record.id = snap?.id;
 
-        setUserData(record);
-        setIsAuthenticated(true);
-        setIsUserVerified(user.emailVerified);
+          setUserData(record);
+          setIsAuthenticated(true);
+          setIsUserVerified(user.emailVerified);
+        } else {
+          console.log('No document exists...');
+        }
       }
     });
   }, []);
@@ -38,6 +42,7 @@ const WithAuthentication = ({ children }) => {
   // allowed pages
   const onlyForLoggedInUser = ['/', '/tasks', '/tasks/[uuid]'];
   const onlyForLoggedInTeamLeaders = ['/', '/tasks', '/tasks/[uuid]'];
+  const onlyForLoggedOutUser = ['/createaccount', '/login', '/reset', '/invite'];
 
   if (isAuthenticated === false) {
     if (pathname === '/login' || pathname === '/createaccount' || pathname === '/reset' || pathname === '/invite') {
@@ -55,10 +60,19 @@ const WithAuthentication = ({ children }) => {
     );
   }
 
+  console.log(userData);
+
   // new login
-  if (!!isAuthenticated && !!isUserVerified && userData?.role !== 'joined') {
+  if (!!isAuthenticated && !!isUserVerified && userData?.status === 'approved') {
+    console.log('hey');
     if (userData?.role === 'Admin') {
-      return children;
+      if (onlyForLoggedOutUser.includes(pathname) === true) {
+        push('/');
+      } else if (pathname === '/request') {
+        push('/');
+      } else {
+        return children;
+      }
     } else if (userData?.role === 'Team Leader') {
       if (onlyForLoggedInTeamLeaders.includes(pathname) === true) {
         return children;
@@ -72,13 +86,17 @@ const WithAuthentication = ({ children }) => {
         push('/');
       }
     }
-  } else if (!!isAuthenticated && !!isUserVerified && userData?.role === 'joined') {
+  } else if (!!isAuthenticated && !!isUserVerified && userData?.status === 'pending') {
+    console.log('hey');
+
     if (pathname === '/request') {
       return children;
     } else {
       push('/request');
     }
   } else if (!!isAuthenticated && isUserVerified === false) {
+    console.log('hey');
+
     if (pathname === '/login') {
       return children;
     } else {

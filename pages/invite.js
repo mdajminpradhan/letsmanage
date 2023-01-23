@@ -3,12 +3,13 @@ import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
+import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, signOut } from 'firebase/auth';
 import { collection, deleteDoc, doc, getDocs, getFirestore, onSnapshot, query, setDoc, where } from 'firebase/firestore';
 import { XMarkIcon } from '@heroicons/react/24/solid';
 import WithAuthentication from '@/utils/WithAuthentication';
 import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/router';
+import Head from 'next/head';
 
 const schema = yup
   .object()
@@ -16,7 +17,8 @@ const schema = yup
     username: yup.string().required(),
     name: yup.string().required(),
     email: yup.string().required(),
-    password: yup.string().required()
+    password: yup.string().required(),
+    department: yup.string().required(),
   })
   .required();
 
@@ -43,20 +45,18 @@ const Invite = () => {
 
   // getting all spaces
   useEffect(() => {
-    (async () => {
-      const q = query(collection(getFirestore(), 'spaces'));
+    const q = query(collection(getFirestore(), 'spaces'));
 
-      onSnapshot(q, (querySnapshot) => {
-        const records = [];
-        querySnapshot.forEach((doc) => {
-          const record = doc.data();
-          record.id = doc.id;
+    onSnapshot(q, (querySnapshot) => {
+      const records = [];
+      querySnapshot.forEach((doc) => {
+        const record = doc.data();
+        record.id = doc.id;
 
-          records.push(record);
-        });
-        setSpaces(records);
+        records.push(record);
       });
-    })();
+      setSpaces(records);
+    });
   }, []);
 
   // getting all tasks
@@ -71,6 +71,7 @@ const Invite = () => {
           if (snap.size > 0) {
             setIsInvitationLinkValid(true);
           } else {
+            console.log('hey - ', routerQuery);
             setIsInvitationLinkValid(false);
           }
 
@@ -103,6 +104,10 @@ const Invite = () => {
 
     formdata.role = 'User';
     formdata.status = 'joined';
+    formdata.departmentName = JSON.parse(formdata.department)?.name;
+    formdata.departmentId = JSON.parse(formdata.department)?.id;
+
+    console.log(JSON.parse(formdata.department));
 
     try {
       await setDoc(doc(getFirestore(), 'users', user?.user?.uid), formdata);
@@ -123,144 +128,168 @@ const Invite = () => {
     } catch (error) {
       console.log(error);
     }
+
+    // signout user
+    try {
+      await signOut(getAuth());
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const watchAll = watch();
 
   useEffect(() => {
-    console.log(errors, watchAll);
+    // console.log(errors, watchAll);
   }, [errors, watchAll]);
 
   if (isInvitationLinkValid === true) {
     return (
-      <div className="bg-silent bg-cover bg-no-repeat grid place-content-center h-screen">
-        {isInvitationLinkValid === true &&
-          (step == 1 ? (
-            <div className="text-center">
-              <p>Hey, Welcome to the house</p>
-              <p>You need to create an account first to continue</p>
-              <div className="flex justify-center w-full mt-6">
-                <button type="button" className="bg-primary hover:bg-hoverPrimary px-4 py-2 w-full font-medium rounded-xl text-white" onClick={() => setStep(2)}>
-                  Create account
-                </button>
-              </div>
-            </div>
-          ) : step === 2 ? (
-            <form
-              onSubmit={handleSubmit(createAccount)}
-              className="bg-[#D9D9D9] bg-opacity-5 border border-white border-opacity-10 rounded-xl w-72 sm:w-[550px] px-5 sm:px-10 py-10"
-            >
-              <h2 className="text-xl sm:text-2xl text-white">Let&apos;s Manage</h2>
-              <p className="text-white text-sm sm:text-base mb-8">Let&apos;s manage the amazing team</p>
-              <div className="mb-4">
-                <label htmlFor="email" className="text-white  text-sm sm:text-base mb-1.5 block">
-                  Username
-                </label>
-                <input
-                  type="text"
-                  className="text-sm px-4 py-1.5 rounded-lg border border-white border-opacity-30 text-white focus:ring-0 outline-none ring-blue-400 w-full bg-transparent"
-                  min={5}
-                  max={50}
-                  required
-                  {...register('username')}
-                  placeholder="Enter username"
-                />
-              </div>
-              <div className="mb-4">
-                <label htmlFor="email" className="text-white  text-sm sm:text-base mb-1.5 block">
-                  Name
-                </label>
-                <input
-                  type="text"
-                  className="text-sm px-4 py-1.5 rounded-lg border border-white border-opacity-30 text-white focus:ring-0 outline-none ring-blue-400 w-full bg-transparent"
-                  min={5}
-                  max={50}
-                  required
-                  {...register('name')}
-                  placeholder="Enter your name"
-                />
-              </div>
-              <div className="mb-4">
-                <label htmlFor="email" className="text-white  text-sm sm:text-base mb-1.5 block">
-                  Email address
-                </label>
-                <input
-                  type="email"
-                  className="text-sm px-4 py-1.5 rounded-lg border border-white border-opacity-30 text-white focus:ring-0 outline-none ring-blue-400 w-full bg-transparent"
-                  min={5}
-                  max={50}
-                  required
-                  {...register('email')}
-                  placeholder="Enter your email"
-                />
-              </div>
-              <div className="mb-2">
-                <label htmlFor="email" className="text-white  text-sm sm:text-base mb-1.5 block">
-                  Password
-                </label>
-                <input
-                  type="password"
-                  className="text-sm px-4 py-1.5 rounded-lg border border-white border-opacity-30 text-white focus:ring-0 outline-none ring-blue-400 w-full bg-transparent"
-                  min={5}
-                  max={50}
-                  required
-                  {...register('password')}
-                  placeholder="Enter your password"
-                />
-              </div>
-              <div className="mb-2">
-                <label htmlFor="email" className="text-white  text-sm sm:text-base mb-1.5 block">
-                  Deparment
-                </label>
-                <select
-                  className="text-sm px-4 py-1.5 rounded-lg border border-white border-opacity-30 text-white focus:ring-0 outline-none ring-blue-400 w-full bg-transparent capitalize"
-                  required
-                  {...register('department')}
-                >
-                  <option value="">Select a department</option>
-                  {spaces?.map((space, index) => (
-                    <option value={space} key={index}>
-                      {space.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <Link href="/login" legacyBehavior>
-                <a className="text-gray-200 text-sm sm:text-base hover:text-white mb-8 block">Already have an account?</a>
-              </Link>
-
-              <div className="flex justify-center w-full">
-                <button
-                  type={isLoading === true ? 'button' : 'submit'}
-                  className="bg-primary hover:bg-hoverPrimary px-4 py-2 w-full font-medium rounded-xl text-white text-sm sm:text-base"
-                >
-                  {isLoading === true ? 'Creating...' : 'Create Account'}
-                </button>
-              </div>
-
-              {isErrors !== '' && (
-                <div className="flex items-center mt-2">
-                  <XMarkIcon className="h-5 w-5 stroke-red-400" />
-                  <p className="text-white text-sm sm:text-base">Looks like email already exist</p>
+      <>
+        <Head>
+          <title>Let&apos;s Manage</title>
+        </Head>
+        <div className="bg-silent bg-cover bg-no-repeat grid place-content-center h-screen">
+          {isInvitationLinkValid === true &&
+            (step == 1 ? (
+              <div className="text-center">
+                <p>Hey, Welcome to the house</p>
+                <p>You need to create an account first to continue</p>
+                <div className="flex justify-center w-full mt-6">
+                  <button
+                    type="button"
+                    className="bg-primary hover:bg-hoverPrimary px-4 py-2 w-full font-medium rounded-xl text-white"
+                    onClick={() => setStep(2)}
+                  >
+                    Create account
+                  </button>
                 </div>
-              )}
-            </form>
-          ) : null)}
-      </div>
+              </div>
+            ) : step === 2 ? (
+              <form
+                onSubmit={handleSubmit(createAccount)}
+                className="bg-[#D9D9D9] bg-opacity-5 border border-white border-opacity-10 rounded-xl w-72 sm:w-[550px] px-5 sm:px-10 py-10"
+              >
+                <h2 className="text-xl sm:text-2xl text-white">Let&apos;s Manage</h2>
+                <p className="text-white text-sm sm:text-base mb-8">Let&apos;s manage the amazing team</p>
+                <div className="mb-4">
+                  <label htmlFor="email" className="text-white  text-sm sm:text-base mb-1.5 block">
+                    Username
+                  </label>
+                  <input
+                    type="text"
+                    className="text-sm px-4 py-1.5 rounded-lg border border-white border-opacity-30 text-white focus:ring-0 outline-none ring-blue-400 w-full bg-transparent"
+                    min={5}
+                    max={50}
+                    required
+                    {...register('username')}
+                    placeholder="Enter username"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label htmlFor="email" className="text-white  text-sm sm:text-base mb-1.5 block">
+                    Name
+                  </label>
+                  <input
+                    type="text"
+                    className="text-sm px-4 py-1.5 rounded-lg border border-white border-opacity-30 text-white focus:ring-0 outline-none ring-blue-400 w-full bg-transparent"
+                    min={5}
+                    max={50}
+                    required
+                    {...register('name')}
+                    placeholder="Enter your name"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label htmlFor="email" className="text-white  text-sm sm:text-base mb-1.5 block">
+                    Email address
+                  </label>
+                  <input
+                    type="email"
+                    className="text-sm px-4 py-1.5 rounded-lg border border-white border-opacity-30 text-white focus:ring-0 outline-none ring-blue-400 w-full bg-transparent"
+                    min={5}
+                    max={50}
+                    required
+                    {...register('email')}
+                    placeholder="Enter your email"
+                  />
+                </div>
+                <div className="mb-2">
+                  <label htmlFor="email" className="text-white  text-sm sm:text-base mb-1.5 block">
+                    Password
+                  </label>
+                  <input
+                    type="password"
+                    className="text-sm px-4 py-1.5 rounded-lg border border-white border-opacity-30 text-white focus:ring-0 outline-none ring-blue-400 w-full bg-transparent"
+                    min={5}
+                    max={50}
+                    required
+                    {...register('password')}
+                    placeholder="Enter your password"
+                  />
+                </div>
+                <div className="mb-2">
+                  <label htmlFor="email" className="text-white  text-sm sm:text-base mb-1.5 block">
+                    Deparment
+                  </label>
+                  <select
+                    className="text-sm px-4 py-1.5 rounded-lg border border-white border-opacity-30 text-white focus:ring-0 outline-none ring-blue-400 w-full bg-transparent capitalize"
+                    required
+                    {...register('department')}
+                  >
+                    <option value="">Select a department</option>
+                    {spaces?.map((space, index) => (
+                      <option value={JSON.stringify({ name: space?.name, id: space?.id })} key={index}>
+                        {space.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <Link href="/login" legacyBehavior>
+                  <a className="text-gray-200 text-sm sm:text-base hover:text-white mb-8 block">Already have an account?</a>
+                </Link>
+
+                <div className="flex justify-center w-full">
+                  <button
+                    type={isLoading === true ? 'button' : 'submit'}
+                    className="bg-primary hover:bg-hoverPrimary px-4 py-2 w-full font-medium rounded-xl text-white text-sm sm:text-base"
+                  >
+                    {isLoading === true ? 'Creating...' : 'Create Account'}
+                  </button>
+                </div>
+
+                {isErrors !== '' && (
+                  <div className="flex items-center mt-2">
+                    <XMarkIcon className="h-5 w-5 stroke-red-400" />
+                    <p className="text-white text-sm sm:text-base">Looks like email already exist</p>
+                  </div>
+                )}
+              </form>
+            ) : null)}
+        </div>
+      </>
     );
   }
 
   if (isInvitationLinkValid === false) {
     return (
-      <div className="bg-silent bg-cover bg-no-repeat grid place-content-center h-screen">
-        <p className="">Looks like your link isn&apos;t valid....</p>
-      </div>
+      <>
+        <Head>
+          <title>Let&apos;s Manage</title>
+        </Head>
+        <div className="bg-silent bg-cover bg-no-repeat grid place-content-center h-screen">
+          <p className="">Looks like your link isn&apos;t valid....</p>
+        </div>
+      </>
     );
   }
 
   return (
     <WithAuthentication>
+      <Head>
+        <title>Let&apos;s Manage</title>
+      </Head>
       <div className="bg-silent bg-cover bg-no-repeat grid place-content-center h-screen">
         <p className="">Checking your link....</p>
       </div>
