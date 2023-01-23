@@ -117,15 +117,15 @@ const Layout = ({ titleFromChild = '', children }) => {
         )}
 
         <section className="overflow-x-scroll">
-          <div className={`flex justify-between items-center px-8 ${userData?.role !== 'User' ? 'mt-8' : 'mt-5'}`}>
+          <div className={`flex justify-between items-center sm:px-8 ${userData?.role !== 'User' ? 'mt-8' : 'mt-5'}`}>
             {userData?.role == 'User' ? (
               <div className="flex items-center">
                 <div className="flex items-center pl-4">
                   <p className="h-9 w-9 rounded-xl bg-[#2094FF] bg-opacity-[25%] flex justify-center items-center mr-2 font-medium text-sm">LM</p>
-                  <p className="text-white text-xl">Let&apos;s Manage</p>
+                  <p className="text-white sm:text-xl">Let&apos;s Manage</p>
                 </div>
                 <Link href="/" legacyBehavior>
-                  <div className="flex items-center cursor-pointer relative left-10 mt-1">
+                  <div className="hidden sm:flex items-center cursor-pointer relative left-10 mt-1">
                     <div className="h-8 w-8 relative">
                       <Image src="/assets/icons/house.png" alt="Picture of the author" fill className="object-contain	" />
                     </div>
@@ -133,7 +133,7 @@ const Layout = ({ titleFromChild = '', children }) => {
                   </div>
                 </Link>
                 <Link href={`/tasks?spaceId=${userData?.departmentId}`} legacyBehavior>
-                  <a className="pl-11 flex items-center mt-1">
+                  <a className="pl-11 hidden sm:flex items-center mt-1">
                     <span className="bg-secondary h-1.5 w-1.5 rounded-full block mr-2"></span>
                     <span>{userData?.department || 'Department name'}</span>
                   </a>
@@ -173,6 +173,7 @@ const Layout = ({ titleFromChild = '', children }) => {
                     <div className="pl-2 pt-2 pb-2 border-b border-white border-opacity-25">
                       <p>{userData?.name?.substring(0, 15) + '...'}</p>
                       <p className="text-xs">{userData?.email?.substring(0, 20) + '...'}</p>
+                      <p className='text-xs mt-1 px-2 py-1 rounded-xl bg-amrblue bg-opacity-25 inline-block'>{userData?.departmentName}</p>
                     </div>
                     {userData?.role !== 'User' && (
                       <>
@@ -200,6 +201,23 @@ const Layout = ({ titleFromChild = '', children }) => {
                 </Menu.Items>
               </Transition>
             </Menu>
+          </div>
+
+          <div className="flex items-center sm:hidden">
+            <Link href="/" legacyBehavior>
+              <div className="flex items-center cursor-pointer relative left-5 mt-1">
+                <div className="h-8 w-8 relative">
+                  <Image src="/assets/icons/house.png" alt="Picture of the author" fill className="object-contain	" />
+                </div>
+                <a className="w-full ml-2 text-sm">Dashboard</a>
+              </div>
+            </Link>
+            <Link href={`/tasks?spaceId=${userData?.departmentId}`} legacyBehavior>
+              <a className="pl-11 flex items-center mt-1">
+                <span className="bg-secondary h-1.5 w-1.5 rounded-full block mr-2"></span>
+                <span className=' text-sm'>{userData?.department || 'Department name'}</span>
+              </a>
+            </Link>
           </div>
           {children}
         </section>

@@ -25,8 +25,8 @@ const WithAuthentication = ({ children }) => {
         const docRef = doc(getFirestore(), 'users', user.uid);
         const snap = await getDoc(docRef);
 
-        const record = snap.data();
-        record.id = snap.id;
+        const record = snap?.data();
+        record.id = snap?.id;
 
         setUserData(record);
         setIsAuthenticated(true);

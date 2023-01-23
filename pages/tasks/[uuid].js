@@ -83,22 +83,26 @@ const Tasks = () => {
         <p className="p-48 text-center">Deleting your task...</p>
       ) : (
         <>
-          <div className="flex justify-between w-11/12 pl-8 p4-4 mx-auto mt-5">
-            <div>
-              <p className="text-xl">{task.name || 'Task name'}</p>
-              <div className="flex items-center mt-4">
+          <div className="flex justify-between w-11/12 sm:pl-8 p4-4 mx-auto mt-8 sm:mt-5">
+            <div className='w-full'>
+              <p className="sm:text-xl">{task.name || 'Task name'}</p>
+              <div className="grid grid-cols-2 gap-y-6 w-full sm:flex sm:items-center mt-6 sm:mt-4">
                 <Listbox value={selected} onChange={handleUpdate}>
-                  <div className="relative ml-2">
-                    <Listbox.Button className="relative w-full cursor-pointer rounded-full border border-white border-opacity-10 text-xs px-2 py-1.5 pr-8 focus:outline-none focus:ring-0">
-                      <span className="bg-amrblue bg-opacity-25 rounded-full px-4 py-1 text-sm inline-block">{selected}</span>
-                      <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                  <div className="relative sm:ml-2">
+                    <Listbox.Button className="relative w- cursor-pointer rounded-full border border-white border-opacity-10 px-1 py-1 pb-[5px] pl-2 pr-6 sm:pb-1.5 sm:px-2 sm:py-1.5 sm:pr-8 focus:outline-none focus:ring-0">
+                      <span className="bg-amrblue bg-opacity-25 rounded-full px-4 py-1 text-xs sm:text-sm inline-block">{selected}</span>
+                      <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-1 sm:pr-2">
                         <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
                       </span>
                     </Listbox.Button>
                     <Transition as={Fragment} leave="transition ease-in duration-100" leaveFrom="opacity-100" leaveTo="opacity-0">
                       <Listbox.Options className="absolute mt-1 max-h-60 w-48 overflow-y-scroll rounded-md bg-gray-900 py-1 shadow-lg ring-0 focus:outline-none sm:text-sm">
                         {status.map((item, index) => (
-                          <Listbox.Option key={index} className={({ active }) => `relative cursor-pointer select-none py-2 pl-4 pr-4 ${active ? 'bg-gray-900' : ''}`} value={item}>
+                          <Listbox.Option
+                            key={index}
+                            className={({ active }) => `relative cursor-pointer select-none py-2 pl-4 pr-4 ${active ? 'bg-gray-900' : ''}`}
+                            value={item}
+                          >
                             {({ selected }) => (
                               <>
                                 <span className={`block truncate ${selected ? 'font-medium' : 'font-normal'}`}>{item}</span>
@@ -117,7 +121,7 @@ const Tasks = () => {
                 </Listbox>
 
                 <FlagIcon className={`h-5 w-5 fill-third ml-10 ${task?.priority?.color}`} />
-                <p className="text-sm ml-10">{!!task?.taskDate ? task?.taskDate : 'Unsceduled task' || 'Task date'}</p>
+                <p className="text-sm ml-1.5 sm:ml-10">{!!task?.taskDate ? task?.taskDate : 'Unsceduled task' || 'Task date'}</p>
 
                 <p className="text-sm ml-10">{task?.selectedEmployeeName || 'Name'}</p>
               </div>
@@ -154,7 +158,7 @@ const Tasks = () => {
             )}
           </div>
 
-          <div className="max-w-[91%] mx-auto pl-8 pr-4 mt-6">
+          <div className="max-w-[91%] mx-auto pl-1.5 sm:pl-8 sm:pr-4 mt-10 sm:mt-6">
             <p className="leading-8">{task?.description || 'Description'}</p>
 
             {task?.subTasks?.length > 0 ? (
