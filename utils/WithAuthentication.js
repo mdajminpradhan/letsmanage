@@ -22,18 +22,18 @@ const WithAuthentication = ({ children }) => {
       if (!user) {
         setIsAuthenticated(false);
       } else {
-        const docRef = doc(getFirestore(), 'users', user.uid);
-        const snap = await getDoc(docRef);
+        try {
+          const docRef = doc(getFirestore(), 'users', user.uid);
+          const snap = await getDoc(docRef);
 
-        if (snap.exists()) {
           const record = snap?.data();
           record.id = snap?.id;
 
           setUserData(record);
           setIsAuthenticated(true);
           setIsUserVerified(user.emailVerified);
-        } else {
-          console.log('No document exists...');
+        } catch (error) {
+          console.log(error);
         }
       }
     });
@@ -64,7 +64,6 @@ const WithAuthentication = ({ children }) => {
 
   // new login
   if (!!isAuthenticated && !!isUserVerified && userData?.status === 'approved') {
-    console.log('hey');
     if (userData?.role === 'Admin') {
       if (onlyForLoggedOutUser.includes(pathname) === true) {
         push('/');
@@ -86,22 +85,20 @@ const WithAuthentication = ({ children }) => {
         push('/');
       }
     }
-  } else if (!!isAuthenticated && !!isUserVerified && userData?.status === 'pending') {
-    console.log('hey');
-
+  } else if (!!isAuthenticated && !!isUserVerified && userData?.status === 'joined') {
     if (pathname === '/request') {
       return children;
     } else {
       push('/request');
     }
   } else if (!!isAuthenticated && isUserVerified === false) {
-    console.log('hey');
-
     if (pathname === '/login') {
       return children;
     } else {
       push('/login');
     }
+  } else {
+    return 'pasdf';
   }
 };
 
