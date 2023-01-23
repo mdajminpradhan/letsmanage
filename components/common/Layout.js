@@ -17,6 +17,7 @@ import ShortcusOpen from './ShortcusOpen';
 import { getAuth, signOut } from 'firebase/auth';
 import Link from 'next/link';
 import CopyInvite from '../dashboard/CopyInvite';
+import Head from 'next/head';
 
 const Layout = ({ titleFromChild = '', children }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -109,9 +110,12 @@ const Layout = ({ titleFromChild = '', children }) => {
 
   return (
     <WithAuthentication>
+      <Head>
+        <title>Let&apos;s Manage</title>
+      </Head>
       <section className={`h-screen overflow-hidden bg-silent bg-no-repeat bg-cover ${userData?.role !== 'User' ? 'app-layout' : ''}`}>
         {userData?.role !== 'User' && (
-          <section>
+          <section className="hidden md:block">
             <LayoutLeft />
           </section>
         )}
@@ -135,7 +139,7 @@ const Layout = ({ titleFromChild = '', children }) => {
                 <Link href={`/tasks?spaceId=${userData?.departmentId}`} legacyBehavior>
                   <a className="pl-11 hidden sm:flex items-center mt-1">
                     <span className="bg-secondary h-1.5 w-1.5 rounded-full block mr-2"></span>
-                    <span>{userData?.department || 'Department name'}</span>
+                    <span>{userData?.departmentName || 'Department name'}</span>
                   </a>
                 </Link>
               </div>
@@ -146,7 +150,11 @@ const Layout = ({ titleFromChild = '', children }) => {
                 <div className="h-9 w-9 rounded-lg bg-white bg-opacity-10 grid place-content-center">
                   <span className="h-5 w-5 rounded-full border-[5px] border-secondary block"></span>
                 </div>
-                {titleFromChild !== '' ? <h2 className="text-xl font-medium ml-2">{titleFromChild}</h2> : <h2 className="text-xl font-medium ml-2">{title}</h2>}
+                {titleFromChild !== '' ? (
+                  <h2 className="text-xl font-medium ml-2">{titleFromChild}</h2>
+                ) : (
+                  <h2 className="text-xl font-medium ml-2">{title}</h2>
+                )}
               </div>
             )}
 
@@ -173,7 +181,7 @@ const Layout = ({ titleFromChild = '', children }) => {
                     <div className="pl-2 pt-2 pb-2 border-b border-white border-opacity-25">
                       <p>{userData?.name?.substring(0, 15) + '...'}</p>
                       <p className="text-xs">{userData?.email?.substring(0, 20) + '...'}</p>
-                      <p className='text-xs mt-1 px-2 py-1 rounded-xl bg-amrblue bg-opacity-25 inline-block'>{userData?.departmentName}</p>
+                      <p className="text-xs mt-1 px-2 py-1 rounded-xl bg-amrblue bg-opacity-25 inline-block">{userData?.departmentName}</p>
                     </div>
                     {userData?.role !== 'User' && (
                       <>
@@ -215,7 +223,7 @@ const Layout = ({ titleFromChild = '', children }) => {
             <Link href={`/tasks?spaceId=${userData?.departmentId}`} legacyBehavior>
               <a className="pl-11 flex items-center mt-1">
                 <span className="bg-secondary h-1.5 w-1.5 rounded-full block mr-2"></span>
-                <span className=' text-sm'>{userData?.department || 'Department name'}</span>
+                <span className=" text-sm">{userData?.department || 'Department name'}</span>
               </a>
             </Link>
           </div>

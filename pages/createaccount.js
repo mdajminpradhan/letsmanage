@@ -3,11 +3,12 @@ import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
+import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, signOut } from 'firebase/auth';
 import { collection, doc, getFirestore, onSnapshot, query, setDoc } from 'firebase/firestore';
 import { XMarkIcon } from '@heroicons/react/24/solid';
 import WithAuthentication from '@/utils/WithAuthentication';
 import { toast } from 'react-hot-toast';
+import Head from 'next/head';
 
 const schema = yup
   .object()
@@ -73,8 +74,8 @@ const CreateAccount = () => {
 
     formdata.role = 'User';
     formdata.status = 'joined';
-    formdata.departmentName = formdata.department[0]
-    formdata.departmentId = formdata.department[1]
+    formdata.departmentName = formdata.department[0];
+    formdata.departmentId = formdata.department[1];
 
     try {
       await setDoc(doc(getFirestore(), 'users', user?.user?.uid), formdata);
@@ -87,22 +88,35 @@ const CreateAccount = () => {
       setIsLoading(false);
       setIsErrors(error);
     }
+
+    // signout user
+    try {
+      await signOut(getAuth());
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const watchAll = watch();
 
   useEffect(() => {
-    console.log(errors, watchAll?.department);
+    console.log(errors, watchAll);
   }, [errors, watchAll]);
 
   return (
     <WithAuthentication>
+      <Head>
+        <title>Let&apos;s Manage</title>
+      </Head>
       <div className="h-screen bg-silent bg-no-repeat bg-cover grid place-content-center">
-        <form onSubmit={handleSubmit(createAccount)} className="bg-[#D9D9D9] bg-opacity-5 border border-white border-opacity-10 rounded-xl w-72 sm:w-[550px] px-5 sm:px-10 py-10">
+        <form
+          onSubmit={handleSubmit(createAccount)}
+          className="bg-[#D9D9D9] bg-opacity-5 border border-white border-opacity-10 rounded-xl w-72 sm:w-[550px] px-5 sm:px-10 py-10"
+        >
           <h2 className="text-xl sm:text-2xl text-white">Let&apos;s Manage</h2>
           <p className="text-white text-sm sm:text-base mb-8">Let&apos;s manage the amazing team</p>
           <div className="mb-4">
-            <label htmlFor="email"className="text-white  text-sm sm:text-base mb-1.5 block">
+            <label htmlFor="email" className="text-white  text-sm sm:text-base mb-1.5 block">
               Username
             </label>
             <input
@@ -116,7 +130,7 @@ const CreateAccount = () => {
             />
           </div>
           <div className="mb-4">
-            <label htmlFor="email"className="text-white  text-sm sm:text-base mb-1.5 block">
+            <label htmlFor="email" className="text-white  text-sm sm:text-base mb-1.5 block">
               Name
             </label>
             <input
@@ -130,7 +144,7 @@ const CreateAccount = () => {
             />
           </div>
           <div className="mb-4">
-            <label htmlFor="email"className="text-white  text-sm sm:text-base mb-1.5 block">
+            <label htmlFor="email" className="text-white  text-sm sm:text-base mb-1.5 block">
               Email address
             </label>
             <input
@@ -144,7 +158,7 @@ const CreateAccount = () => {
             />
           </div>
           <div className="mb-2">
-            <label htmlFor="email"className="text-white  text-sm sm:text-base mb-1.5 block">
+            <label htmlFor="email" className="text-white  text-sm sm:text-base mb-1.5 block">
               Password
             </label>
             <input
@@ -158,7 +172,7 @@ const CreateAccount = () => {
             />
           </div>
           <div className="mb-2">
-            <label htmlFor="email"className="text-white  text-sm sm:text-base mb-1.5 block">
+            <label htmlFor="email" className="text-white  text-sm sm:text-base mb-1.5 block">
               Deparment
             </label>
             <select
@@ -180,7 +194,10 @@ const CreateAccount = () => {
           </Link>
 
           <div className="flex justify-center w-full">
-            <button type={isLoading === true ? 'button' : 'submit'} className="bg-primary hover:bg-hoverPrimary px-4 py-2 w-full font-medium rounded-xl text-white text-sm sm:text-base">
+            <button
+              type={isLoading === true ? 'button' : 'submit'}
+              className="bg-primary hover:bg-hoverPrimary px-4 py-2 w-full font-medium rounded-xl text-white text-sm sm:text-base"
+            >
               {isLoading === true ? 'Creating...' : 'Create Account'}
             </button>
           </div>
