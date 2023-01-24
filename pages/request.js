@@ -34,9 +34,16 @@ const Request = () => {
           <div className="h-28 w-28 mx-auto mb-4 rounded-full relative">
             <Image src="/assets/icons/lock.png" alt="Picture of the author" fill />
           </div>
-          <p className="text-xl w-96 text-center">You need to get approval before you manage your tasks</p>
 
-          {isSuccess === true ? (
+          {userData?.status === 'joined' ? (
+            <p className="text-xl w-96 text-center">You need to get approval before you manage your tasks</p>
+          ) : userData?.status === 'pending' ? (
+            <p className="text-xl w-96 text-center">You have requested for approval. Please wait until someone approve your request... </p>
+          ) : (
+            <p className="text-xl w-96 text-center">You need to get approval before you manage your tasks</p>
+          )}
+
+          {isSuccess === true || userData?.status === 'pending' ? (
             <div className="flex justify-center w-full mt-10">
               <button type="button" className="bg-primary hover:bg-hoverPrimary px-4 py-2 w-full font-medium rounded-xl text-white">
                 Requested

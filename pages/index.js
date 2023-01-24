@@ -25,31 +25,29 @@ const Home = () => {
 
   // getting all tasks
   useEffect(() => {
-    (async () => {
-      if (Object.keys(userData).length > 0) {
-        // query
-        const q = query(
-          collection(getFirestore(), `spaces/${userData?.departmentId}/tasks`),
-          where('status', 'in', ['To Do', 'In Progress', 'Complete', 'Delay']),
-          where('selectedEmployeeId', '==', userData?.id),
-          where('taskDate', '==', format(new Date(Date.now()), 'dd/MM/yyyy'))
-        );
+    if (Object.keys(userData).length > 0) {
+      // query
+      const q = query(
+        collection(getFirestore(), `spaces/${userData?.departmentId}/tasks`),
+        // where('status', 'in', ['To Do', 'In Progress', 'Complete', 'Delay']),
+        where('selectedEmployeeId', '==', userData?.id)
+        // where('taskDate', '==', format(new Date(Date.now()), 'dd/MM/yyyy'))
+      );
 
-        // getting data
-        onSnapshot(q, (querySnapshot) => {
-          const records = [];
-          querySnapshot.forEach(async (doc) => {
-            const record = doc.data();
-            record.id = doc.id;
-            records.push(record);
-          });
-
-          // setting values
-          setTodayTasks(records);
-          setIsLoading(false);
+      // getting data
+      onSnapshot(q, (querySnapshot) => {
+        const records = [];
+        querySnapshot.forEach(async (doc) => {
+          const record = doc.data();
+          record.id = doc.id;
+          records.push(record);
         });
-      }
-    })();
+
+        // setting values
+        setTodayTasks(records);
+        setIsLoading(false);
+      });
+    }
   }, [userData]);
 
   // getting overdue tasks
@@ -61,7 +59,7 @@ const Home = () => {
           collection(getFirestore(), `spaces/${userData?.departmentId}/tasks`),
           where('status', 'in', ['To Do', 'In Progress', 'Complete', 'Delay']),
           where('selectedEmployeeId', '==', userData?.id),
-          where('taskDate', '!=', ""),
+          where('taskDate', '!=', ''),
           where('taskDate', '<', format(new Date(Date.now()), 'dd/MM/yyyy'))
         );
 
