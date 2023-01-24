@@ -60,8 +60,6 @@ const WithAuthentication = ({ children }) => {
     );
   }
 
-  console.log(userData);
-
   // new login
   if (!!isAuthenticated && !!isUserVerified && userData?.status === 'approved') {
     if (userData?.role === 'Admin') {
@@ -91,6 +89,12 @@ const WithAuthentication = ({ children }) => {
     } else {
       push('/request');
     }
+  } else if (!!isAuthenticated && !!isUserVerified && userData?.status === 'pending') {
+    if (pathname === '/request') {
+      return children;
+    } else {
+      push('/request');
+    }
   } else if (!!isAuthenticated && isUserVerified === false) {
     if (pathname === '/login') {
       return children;
@@ -98,7 +102,11 @@ const WithAuthentication = ({ children }) => {
       push('/login');
     }
   } else {
-    return 'pasdf';
+    return (
+      <section className={`h-screen overflow-hidden bg-silent bg-no-repeat bg-cover grid place-content-center`}>
+        <p>Something went wrong...</p>
+      </section>
+    );
   }
 };
 
