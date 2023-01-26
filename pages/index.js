@@ -29,9 +29,9 @@ const Home = () => {
       // query
       const q = query(
         collection(getFirestore(), `spaces/${userData?.departmentId}/tasks`),
-        // where('status', 'in', ['To Do', 'In Progress', 'Complete', 'Delay']),
-        where('selectedEmployeeId', '==', userData?.id)
-        // where('taskDate', '==', format(new Date(Date.now()), 'dd/MM/yyyy'))
+        where('status', 'in', ['To Do', 'In Progress', 'Complete']),
+        where('selectedEmployeeId', '==', userData?.id),
+        where('taskDate', '==', format(new Date(Date.now()), 'dd/MM/yyyy'))
       );
 
       // getting data
@@ -52,90 +52,84 @@ const Home = () => {
 
   // getting overdue tasks
   useEffect(() => {
-    (async () => {
-      if (Object.keys(userData).length > 0) {
-        // query
-        const q = query(
-          collection(getFirestore(), `spaces/${userData?.departmentId}/tasks`),
-          where('status', 'in', ['To Do', 'In Progress', 'Complete', 'Delay']),
-          where('selectedEmployeeId', '==', userData?.id),
-          where('taskDate', '!=', ''),
-          where('taskDate', '<', format(new Date(Date.now()), 'dd/MM/yyyy'))
-        );
+    if (Object.keys(userData).length > 0) {
+      // query
+      const q = query(
+        collection(getFirestore(), `spaces/${userData?.departmentId}/tasks`),
+        where('status', 'in', ['To Do', 'In Progress', 'Delay']),
+        where('selectedEmployeeId', '==', userData?.id),
+        where('taskDate', '!=', ''),
+        where('taskDate', '<', format(new Date(Date.now()), 'dd/MM/yyyy'))
+      );
 
-        // getting data
-        onSnapshot(q, (querySnapshot) => {
-          const records = [];
-          querySnapshot.forEach(async (doc) => {
-            const record = doc.data();
-            record.id = doc.id;
-            records.push(record);
-          });
-
-          // setting values
-          setOverDueTaks(records);
-          setIsLoading(false);
+      // getting data
+      onSnapshot(q, (querySnapshot) => {
+        const records = [];
+        querySnapshot.forEach(async (doc) => {
+          const record = doc.data();
+          record.id = doc.id;
+          records.push(record);
         });
-      }
-    })();
+
+        // setting values
+        setOverDueTaks(records);
+        setIsLoading(false);
+      });
+    }
   }, [userData]);
 
   // getting next tasks
   useEffect(() => {
-    (async () => {
-      if (Object.keys(userData).length > 0) {
-        // query
-        const q = query(
-          collection(getFirestore(), `spaces/${userData?.departmentId}/tasks`),
-          where('status', 'in', ['To Do', 'In Progress', 'Complete', 'Delay']),
-          where('selectedEmployeeId', '==', userData?.id),
-          where('taskDate', '>', format(new Date(Date.now()), 'dd/MM/yyyy'))
-        );
+    if (Object.keys(userData).length > 0) {
+      // query
+      const q = query(
+        collection(getFirestore(), `spaces/${userData?.departmentId}/tasks`),
+        where('status', 'in', ['To Do', 'In Progress']),
+        where('selectedEmployeeId', '==', userData?.id),
+        where('taskDate', '>', format(new Date(Date.now()), 'dd/MM/yyyy'))
+      );
 
-        // getting data
-        onSnapshot(q, (querySnapshot) => {
-          const records = [];
-          querySnapshot.forEach(async (doc) => {
-            const record = doc.data();
-            record.id = doc.id;
-            records.push(record);
-          });
-
-          // setting values
-          setNextTasks(records);
-          setIsLoading(false);
+      // getting data
+      onSnapshot(q, (querySnapshot) => {
+        const records = [];
+        querySnapshot.forEach(async (doc) => {
+          const record = doc.data();
+          record.id = doc.id;
+          records.push(record);
         });
-      }
-    })();
+
+        // setting values
+        setNextTasks(records);
+        setIsLoading(false);
+      });
+    }
   }, [userData]);
 
   // getting unscheduled tasks
   useEffect(() => {
-    (async () => {
-      if (Object.keys(userData).length > 0) {
-        // query
-        const q = query(
-          collection(getFirestore(), `spaces/${userData?.departmentId}/tasks`),
-          where('status', 'in', ['To Do', 'In Progress', 'Complete', 'Delay']),
-          where('selectedEmployeeId', '==', userData?.id),
-          where('taskDate', '==', '')
-        );
+    if (Object.keys(userData).length > 0) {
+      // query
+      const q = query(
+        collection(getFirestore(), `spaces/${userData?.departmentId}/tasks`),
+        where('status', 'in', ['To Do', 'In Progress', 'Delay']),
+        where('selectedEmployeeId', '==', userData?.id),
+        where('taskDate', '==', '')
+      );
 
-        // getting data
-        onSnapshot(q, (querySnapshot) => {
-          const records = [];
-          querySnapshot.forEach(async (doc) => {
-            const record = doc.data();
-            record.id = doc.id;
-            records.push(record);
-          });
-
-          // setting values
-          setUnscheduledTasks(records);
-          setIsLoading(false);
+      // getting data
+      onSnapshot(q, (querySnapshot) => {
+        const records = [];
+        querySnapshot.forEach(async (doc) => {
+          const record = doc.data();
+          record.id = doc.id;
+          records.push(record);
         });
-      }
-    })();
+
+        // setting values
+        setUnscheduledTasks(records);
+        setIsLoading(false);
+      });
+    }
   }, [userData]);
 
   return (
@@ -198,7 +192,7 @@ const Home = () => {
                             <div className="flex items-center">
                               <FlagIcon className={`h-5 w-5 ${task?.priority?.color}`} />
                               <p className="ml-8 mr-2">{task?.taskDate}</p>
-                              <p className="ml-8 mr-2 bg-amrblue bg-opacity-25 px-2 py-[2px] text-sm rounded-xl">{task?.status}</p>
+                              <p className="ml-8 mr-2 bg-amrblue bg-opacity-25 px-4 py-[2px] text-sm rounded-xl">{task?.status}</p>
                             </div>
                           </div>
                         </Link>
