@@ -282,7 +282,7 @@ const CreateTask = ({ isOpen, setIsOpen }) => {
                       <p className="text-sm mt-4 text-gray-400 font-medium">Subtasks</p>
                       {subTasks.map((task, index) => (
                         <div className="flex justify-between items-center ml-1" key={index}>
-                          <div className="flex items-center">
+                          <div className="flex items-center w-full">
                             <span className="bg-amrblue h-1.5 w-1.5 rounded-full block"></span>
                             <input
                               type="text"
