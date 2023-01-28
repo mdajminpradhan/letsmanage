@@ -111,7 +111,7 @@ const CreateAccount = () => {
       <div className="h-screen bg-silent bg-no-repeat bg-cover grid place-content-center">
         <form
           onSubmit={handleSubmit(createAccount)}
-          className="bg-[#D9D9D9] bg-opacity-5 border border-white border-opacity-10 rounded-xl w-72 sm:w-[550px] px-5 sm:px-10 py-10"
+          className="bg-[#D9D9D9] bg-opacity-5 border border-white border-opacity-10 rounded-xl w-80 sm:w-[550px] px-5 sm:px-10 py-10"
         >
           <h2 className="text-xl sm:text-2xl text-white">Let&apos;s Manage</h2>
           <p className="text-white text-sm sm:text-base mb-8">Let&apos;s manage the amazing team</p>
