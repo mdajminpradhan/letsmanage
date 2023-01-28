@@ -151,15 +151,15 @@ const Home = () => {
                     ) : (
                       todayTasks.map((task, index) => (
                         <Link href={`tasks/${userData?.departmentId}/?taskId=${task.id}`} key={index}>
-                          <div className="flex justify-between items-center mb-5 cursor-pointer hover:bg-amrblue hover:bg-opacity-10 py-2 hover:px-1.5 transition-all duration-300 rounded-sm">
+                          <div className="grid gap-y-2 lg:flex lg:justify-between lg:items-center mb-5 cursor-pointer hover:bg-amrblue hover:bg-opacity-10 py-2 hover:px-1.5 transition-all duration-300 rounded-sm">
                             <div className="flex items-center">
                               <span className="bg-secondary h-1.5 w-1.5 rounded-full block mr-2"></span>
                               <span>{task.name || 'Task name'}</span>
                             </div>
                             <div className="flex items-center">
-                              <FlagIcon className={`h-5 w-5 ${task?.priority?.color}`} />
-                              <p className="ml-8 mr-2">{task?.taskDate}</p>
-                              <p className="ml-8 mr-2 bg-amrblue bg-opacity-25 px-2 py-[2px] text-sm rounded-xl">{task?.status}</p>
+                              <FlagIcon className={`h-4 w-4 lg:h-5 lg:w-5 ${task?.priority?.color}`} />
+                              <p className="ml-8 mr-2 text-xs lg:text-sm">{task?.taskDate}</p>
+                              <p className="ml-8 mr-2 bg-amrblue bg-opacity-25 px-2 py-[2px] text-xs lg:text-sm rounded-xl">{task?.status}</p>
                             </div>
                           </div>
                         </Link>

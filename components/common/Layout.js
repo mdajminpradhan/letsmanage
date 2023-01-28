@@ -108,6 +108,8 @@ const Layout = ({ titleFromChild = '', children }) => {
     setIsOpen(isCreateTaskOpen);
   }, [isCreateTaskOpen]);
 
+  console.log(userData);
+
   return (
     <WithAuthentication>
       <Head>
@@ -223,7 +225,7 @@ const Layout = ({ titleFromChild = '', children }) => {
             <Link href={`/tasks?spaceId=${userData?.departmentId}`} legacyBehavior>
               <a className="pl-11 flex items-center mt-1">
                 <span className="bg-secondary h-1.5 w-1.5 rounded-full block mr-2"></span>
-                <span className=" text-sm">{userData?.department || 'Department name'}</span>
+                <span className=" text-sm">{userData?.departmentName || 'Department name'}</span>
               </a>
             </Link>
           </div>
