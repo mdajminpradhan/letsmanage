@@ -1,14 +1,26 @@
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
-import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, signOut } from 'firebase/auth';
-import { collection, doc, getFirestore, onSnapshot, query, setDoc } from 'firebase/firestore';
-import { XMarkIcon } from '@heroicons/react/24/solid';
-import WithAuthentication from '@/utils/WithAuthentication';
-import { toast } from 'react-hot-toast';
-import Head from 'next/head';
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+  signOut,
+} from "firebase/auth";
+import {
+  collection,
+  doc,
+  getFirestore,
+  onSnapshot,
+  query,
+  setDoc,
+} from "firebase/firestore";
+import { XMarkIcon } from "@heroicons/react/24/solid";
+import WithAuthentication from "@/utils/WithAuthentication";
+import { toast } from "react-hot-toast";
+import Head from "next/head";
 
 const schema = yup
   .object()
@@ -22,7 +34,7 @@ const schema = yup
 
 const CreateAccount = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [isErrors, setIsErrors] = useState('');
+  const [isErrors, setIsErrors] = useState("");
   const [spaces, setSpaces] = useState([]);
   const [selectedDepartment, setSelectedDepartment] = useState([]);
 
@@ -31,15 +43,15 @@ const CreateAccount = () => {
     handleSubmit,
     formState: { errors },
     reset,
-    watch
+    watch,
   } = useForm({
-    resolver: yupResolver(schema)
+    resolver: yupResolver(schema),
   });
 
   // getting all spaces
   useEffect(() => {
     (async () => {
-      const q = query(collection(getFirestore(), 'spaces'));
+      const q = query(collection(getFirestore(), "spaces"));
 
       onSnapshot(q, (querySnapshot) => {
         const records = [];
@@ -57,36 +69,20 @@ const CreateAccount = () => {
   // create a new account
   const createAccount = async (formdata) => {
     setIsLoading(true);
-    setIsErrors('');
+    setIsErrors("");
     let user;
 
     // creating new account
     try {
-      user = await createUserWithEmailAndPassword(getAuth(), formdata.email, formdata.password);
+      user = await createUserWithEmailAndPassword(
+        getAuth(),
+        formdata.email,
+        formdata.password
+      );
       await sendEmailVerification(getAuth().currentUser);
     } catch (error) {
       console.log(error);
       setIsLoading(false);
-    }
-
-    // creating record
-    delete formdata.password;
-
-    formdata.role = 'User';
-    formdata.status = 'joined';
-    formdata.departmentName = JSON.parse(selectedDepartment)[0];
-    formdata.departmentId = JSON.parse(selectedDepartment)[1];
-
-    try {
-      await setDoc(doc(getFirestore(), 'users', user?.user?.uid), formdata);
-
-      toast.success('Please click the verification link sent to you to verify your email...');
-      setIsLoading(false);
-      reset();
-    } catch (error) {
-      console.log(error);
-      setIsLoading(false);
-      setIsErrors(error);
     }
 
     // signout user
@@ -94,6 +90,28 @@ const CreateAccount = () => {
       await signOut(getAuth());
     } catch (error) {
       console.log(error);
+    }
+
+    // creating record
+    delete formdata.password;
+
+    formdata.role = "User";
+    formdata.status = "joined";
+    formdata.departmentName = JSON.parse(selectedDepartment)[0];
+    formdata.departmentId = JSON.parse(selectedDepartment)[1];
+
+    try {
+      await setDoc(doc(getFirestore(), "users", user?.user?.uid), formdata);
+
+      toast.success(
+        "Please click the verification link sent to you to verify your email..."
+      );
+      setIsLoading(false);
+      reset();
+    } catch (error) {
+      console.log(error);
+      setIsLoading(false);
+      setIsErrors(error);
     }
   };
 
@@ -114,9 +132,14 @@ const CreateAccount = () => {
           className="bg-[#D9D9D9] bg-opacity-5 border border-white border-opacity-10 rounded-xl w-80 sm:w-[550px] px-5 sm:px-10 py-10"
         >
           <h2 className="text-xl sm:text-2xl text-white">Let&apos;s Manage</h2>
-          <p className="text-white text-sm sm:text-base mb-8">Let&apos;s manage the amazing team</p>
+          <p className="text-white text-sm sm:text-base mb-8">
+            Let&apos;s manage the amazing team
+          </p>
           <div className="mb-4">
-            <label htmlFor="email" className="text-white  text-sm sm:text-base mb-1.5 block">
+            <label
+              htmlFor="email"
+              className="text-white  text-sm sm:text-base mb-1.5 block"
+            >
               Username
             </label>
             <input
@@ -125,12 +148,15 @@ const CreateAccount = () => {
               min={5}
               max={50}
               required
-              {...register('username')}
+              {...register("username")}
               placeholder="Enter username"
             />
           </div>
           <div className="mb-4">
-            <label htmlFor="email" className="text-white  text-sm sm:text-base mb-1.5 block">
+            <label
+              htmlFor="email"
+              className="text-white  text-sm sm:text-base mb-1.5 block"
+            >
               Name
             </label>
             <input
@@ -139,12 +165,15 @@ const CreateAccount = () => {
               min={5}
               max={50}
               required
-              {...register('name')}
+              {...register("name")}
               placeholder="Enter your name"
             />
           </div>
           <div className="mb-4">
-            <label htmlFor="email" className="text-white  text-sm sm:text-base mb-1.5 block">
+            <label
+              htmlFor="email"
+              className="text-white  text-sm sm:text-base mb-1.5 block"
+            >
               Email address
             </label>
             <input
@@ -153,12 +182,15 @@ const CreateAccount = () => {
               min={5}
               max={50}
               required
-              {...register('email')}
+              {...register("email")}
               placeholder="Enter your email"
             />
           </div>
           <div className="mb-2">
-            <label htmlFor="email" className="text-white  text-sm sm:text-base mb-1.5 block">
+            <label
+              htmlFor="email"
+              className="text-white  text-sm sm:text-base mb-1.5 block"
+            >
               Password
             </label>
             <input
@@ -167,12 +199,15 @@ const CreateAccount = () => {
               min={5}
               max={50}
               required
-              {...register('password')}
+              {...register("password")}
               placeholder="Enter your password"
             />
           </div>
           <div className="mb-2">
-            <label htmlFor="email" className="text-white  text-sm sm:text-base mb-1.5 block">
+            <label
+              htmlFor="email"
+              className="text-white  text-sm sm:text-base mb-1.5 block"
+            >
               Deparment
             </label>
             <select
@@ -182,7 +217,10 @@ const CreateAccount = () => {
             >
               <option value="">Select a department</option>
               {spaces?.map((space, index) => (
-                <option value={JSON.stringify([space?.name, space?.id])} key={index}>
+                <option
+                  value={JSON.stringify([space?.name, space?.id])}
+                  key={index}
+                >
                   {space.name}
                 </option>
               ))}
@@ -190,22 +228,26 @@ const CreateAccount = () => {
           </div>
 
           <Link href="/login" legacyBehavior>
-            <a className="text-gray-200 text-sm sm:text-base hover:text-white mb-8 block">Already have an account?</a>
+            <a className="text-gray-200 text-sm sm:text-base hover:text-white mb-8 block">
+              Already have an account?
+            </a>
           </Link>
 
           <div className="flex justify-center w-full">
             <button
-              type={isLoading === true ? 'button' : 'submit'}
+              type={isLoading === true ? "button" : "submit"}
               className="bg-primary hover:bg-hoverPrimary px-4 py-2 w-full font-medium rounded-xl text-white text-sm sm:text-base"
             >
-              {isLoading === true ? 'Creating...' : 'Create Account'}
+              {isLoading === true ? "Creating..." : "Create Account"}
             </button>
           </div>
 
-          {isErrors !== '' && (
+          {isErrors !== "" && (
             <div className="flex items-center mt-2">
               <XMarkIcon className="h-5 w-5 stroke-red-400" />
-              <p className="text-white text-sm sm:text-base">Looks like email already exist</p>
+              <p className="text-white text-sm sm:text-base">
+                Looks like email already exist
+              </p>
             </div>
           )}
         </form>
