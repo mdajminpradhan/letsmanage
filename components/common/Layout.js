@@ -108,8 +108,6 @@ const Layout = ({ titleFromChild = '', children }) => {
     setIsOpen(isCreateTaskOpen);
   }, [isCreateTaskOpen]);
 
-  console.log(userData);
-
   return (
     <WithAuthentication>
       <Head>
@@ -142,6 +140,12 @@ const Layout = ({ titleFromChild = '', children }) => {
                   <a className="pl-11 hidden sm:flex items-center mt-1">
                     <span className="bg-secondary h-1.5 w-1.5 rounded-full block mr-2"></span>
                     <span>{userData?.departmentName || 'Department name'}</span>
+                  </a>
+                </Link>
+                <Link href={`/timesheets`} legacyBehavior>
+                  <a className="pl-3 hidden sm:flex items-center mt-1">
+                    <span className="bg-secondary h-1.5 w-1.5 rounded-full block mr-2"></span>
+                    <span>Timesheets</span>
                   </a>
                 </Link>
               </div>
@@ -213,7 +217,7 @@ const Layout = ({ titleFromChild = '', children }) => {
             </Menu>
           </div>
 
-          <div className="flex items-center sm:hidden">
+          <div className="flex items-center sm:hidden w-11/12 overflow-x-scroll scrollbar-thin">
             <Link href="/" legacyBehavior>
               <div className="flex items-center cursor-pointer relative left-5 mt-1">
                 <div className="h-8 w-8 relative">
@@ -226,6 +230,13 @@ const Layout = ({ titleFromChild = '', children }) => {
               <a className="pl-11 flex items-center mt-1">
                 <span className="bg-secondary h-1.5 w-1.5 rounded-full block mr-2"></span>
                 <span className=" text-sm">{userData?.departmentName || 'Department name'}</span>
+              </a>
+            </Link>
+
+            <Link href={`/timesheets`} legacyBehavior>
+              <a className="pl-3 flex items-center mt-1">
+                <span className="bg-secondary h-1.5 w-1.5 rounded-full block mr-2"></span>
+                <span>Timesheets</span>
               </a>
             </Link>
           </div>

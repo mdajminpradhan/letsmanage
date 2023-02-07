@@ -40,8 +40,8 @@ const WithAuthentication = ({ children }) => {
   }, []);
 
   // allowed pages
-  const onlyForLoggedInUser = ['/', '/tasks', '/tasks/[uuid]'];
-  const onlyForLoggedInTeamLeaders = ['/', '/tasks', '/tasks/[uuid]'];
+  const onlyForLoggedInUser = ['/', '/tasks', '/tasks/[uuid]', '/timesheets', '/timesheets/[uuid]'];
+  const onlyForLoggedInTeamLeaders = ['/', '/tasks', '/tasks/[uuid]', '/timesheets', '/timesheets/[uuid]'];
   const onlyForLoggedOutUser = ['/createaccount', '/login', '/reset', '/invite'];
 
   if (isAuthenticated === false) {

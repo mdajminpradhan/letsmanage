@@ -76,14 +76,14 @@ const Tasks = () => {
   };
 
   return (
-    <Layout title="Frontend">
+    <Layout titleFromChild="Task">
       {isLoading === true ? (
         <p className="p-48 text-center">Fetching your task...</p>
       ) : isDeleting === true ? (
         <p className="p-48 text-center">Deleting your task...</p>
       ) : (
         <>
-          <div className="flex justify-between w-11/12 sm:pl-8 p4-4 mx-auto mt-8 sm:mt-5">
+          <div className="flex justify-between w-11/12 sm:pl-8 pr-4 mx-auto mt-8 sm:mt-5">
             <div className='w-full'>
               <p className="sm:text-xl">{task.name || 'Task name'}</p>
               <div className="grid grid-cols-2 gap-y-6 w-full sm:flex sm:items-center mt-6 sm:mt-4">
