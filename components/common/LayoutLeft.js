@@ -7,7 +7,7 @@ import { getFirestore, doc, deleteDoc } from 'firebase/firestore';
 import useAppStore from '@/appStore';
 import { Menu } from '@headlessui/react';
 import MenuTransition from 'components/common/MenuTransition';
-import { TrashIcon } from '@heroicons/react/24/outline';
+import { ClockIcon, TrashIcon } from '@heroicons/react/24/outline';
 
 const LayoutLeft = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -108,13 +108,23 @@ const LayoutLeft = () => {
         {userData?.role === 'Admin' && (
           <Link href="/users" legacyBehavior>
             <div className="flex items-center px-4 py-1 mt-6 cursor-pointer hover:bg-amrblue hover:bg-opacity-20">
-              <div className="h-8 w-8 relative">
+              <div className="h-7 w-7 relative">
                 <Image src="/assets/icons/users.png" alt="Picture of the author" fill />
               </div>
               <a className="w-full ml-2">Users</a>
             </div>
           </Link>
         )}
+
+        {/* users link goes here */}
+        {userData?.role === 'Admin' || userData?.role === 'Team Leader' ? (
+          <Link href="/timesheets" legacyBehavior>
+            <div className="flex items-center px-4 py-[5px] mt-4 cursor-pointer hover:bg-amrblue hover:bg-opacity-20">
+              <ClockIcon className='h-6 w-6 stroke-third' />
+              <a className="w-full ml-2">Timesheets</a>
+            </div>
+          </Link>
+        ) : null}
       </div>
       <CreateSpace
         isOpen={isOpen}

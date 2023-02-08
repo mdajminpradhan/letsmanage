@@ -1,23 +1,23 @@
 import Layout from '@/components/common/Layout';
 import useAppStore from '@/appStore';
-import ShowAllTasksByAllUsers from '@/components/dashboard/ShowAllTasksByAllUsers';
-import ShowTasksByMyId from '@/components/dashboard/ShowTasksByMyId';
+import ShowAllTimesheetsByAllUsers from '@/components/dashboard/ShowAllTimesheetsByAllUsers';
+import ShowTimesheetsByMyId from '@/components/dashboard/ShowTimesheetsByMyId';
 
-const Tasks = () => {
+const Timesheets = () => {
   // app global store
   const { userData } = useAppStore((state) => ({
     userData: state.userData
   }));
 
   return (
-    <Layout>
+    <Layout titleFromChild='Timesheets'>
       {userData?.role === 'Admin' || userData?.role === 'Team Leader' ? (
-        <ShowAllTasksByAllUsers />
+        <ShowAllTimesheetsByAllUsers />
       ) : userData?.role === 'User' ? (
-        <ShowTasksByMyId />
+        <ShowTimesheetsByMyId />
       ) : null}
     </Layout>
   );
 };
 
-export default Tasks;
+export default Timesheets;

@@ -9,6 +9,7 @@ import useAppStore from '@/appStore';
 import { Transition, Listbox } from '@headlessui/react';
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 import { toast } from 'react-hot-toast';
+var convert = require('convert-seconds');
 
 // task status
 const statuses = ['To Do', 'In Progress', 'Complete', 'Closed'];
@@ -197,12 +198,13 @@ const ShowAllTasksByAllUsers = () => {
       </div>
 
       <div className={`w-11/12 px-8 mx-auto overflow-x-scroll`}>
-      <div className="grid grid-cols-12 w-[850px] lg:w-[1150px] xl:w-[1250px] 2xl:w-[1500px]">
+        <div className="grid grid-cols-12 w-[850px] lg:w-[1150px] xl:w-[1250px] 2xl:w-[1500px]">
           <p className="col-span-4 font-medium">Title</p>
           <p className="col-span-3 text-center font-medium">Status</p>
           <p className="col-span-1 text-center font-medium">Priority</p>
+          <p className="col-span-1 text-center font-medium">Tracked</p>
           <p className="col-span-2 text-center font-medium">Deadline</p>
-          <p className="col-span-2 text-center font-medium">Assigns</p>
+          <p className="col-span-1 text-center font-medium">Assigns</p>
         </div>
 
         <div className="w-[850px] lg:w-[1150px] xl:w-[1250px] 2xl:w-[1500px] bg-amrblue bg-opacity-10 mt-3 rounded-sm h-[550px] scrollbar-thin">
@@ -212,7 +214,7 @@ const ShowAllTasksByAllUsers = () => {
             tasks.map((task, index) => (
               <Link href={`/tasks/${routerQuery.spaceId}?taskId=${task.id}`} key={index}>
                 <div className="grid grid-cols-12 items-center border-b border-white border-opacity-25 pl-8 pr-2 hover:bg-amrblue hover:bg-opacity-10 cursor-pointer">
-                  <p className="col-span-4 py-3 border-r border-white border-opacity-25 text-sm">{task?.name || 'Task title'}</p>
+                  <p className="col-span-4 py-3 border-r border-white border-opacity-25 text-sm">{task?.name?.substring(0, 45) || 'Task title'}...</p>
 
                   <Listbox value={task.status} onChange={(s) => handleUpdate({ status: s }, task)}>
                     <div className="relative ml-2 col-span-3 h-full grid place-content-center border-r border-white border-opacity-25">
@@ -249,10 +251,13 @@ const ShowAllTasksByAllUsers = () => {
                   <div className="col-span-1 py-3 border-r border-white border-opacity-25 h-full">
                     <FlagIcon className={`h-5 w-5 mx-auto ${task?.priority?.color}`} />
                   </div>
+                  <p className="col-span-1 text-sm grid place-content-center border-r border-white border-opacity-25 h-full">
+                    {task?.totalTime || 'No started'}
+                  </p>
                   <p className="col-span-2 py-3 border-r border-white border-opacity-25 text-center text-sm h-full">
                     {!!task?.taskDate ? task?.taskDate : 'Unscheduled task'}
                   </p>
-                  <p className="text-sm ml-10">{task?.selectedEmployee?.username || 'Name'}</p>
+                  <p className="text-sm ml-10">{task?.selectedEmployeeName?.substring(0, 5) || 'Name'}...</p>
                 </div>
               </Link>
             ))

@@ -9,10 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@cloudinary/react": "^1.9.1",
+    "@cloudinary/url-gen": "^1.9.0",
     "@headlessui/react": "^1.7.7",
     "@heroicons/react": "^2.0.13",
     "@hookform/resolvers": "^2.9.10",
     "@next/font": "13.1.2",
+    "convert-seconds": "^1.0.1",
     "copy-to-clipboard": "^3.3.3",
     "crypto-js": "^4.1.1",
     "date-fns": "^2.29.3",
@@ -21,6 +24,7 @@
     "firebase": "^9.15.0",
     "next": "13.1.2",
     "react": "18.2.0",
+    "react-date-range": "^1.4.0",
     "react-dom": "18.2.0",
     "react-hook-form": "^7.42.1",
     "react-loading-skeleton": "^3.1.0",
