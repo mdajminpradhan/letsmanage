@@ -100,7 +100,7 @@ const ShowTasksByMyId = () => {
                 >
                   <p className="col-span-4 border-r border-white border-opacity-25 h-full py-2 text-sm">{timesheet?.employee?.name || 'Employee'}</p>
                   <p className="col-span-3 grid place-content-center border-r border-white border-opacity-25 h-full py-2 text-sm">
-                    {`${convert(timesheet?.totalTime).hours}hr ${convert(timesheet?.totalTime).minutes}m ${convert(timesheet?.totalTime).seconds}s`}
+                    {`${convert(timesheet?.totalTime).hours}hr ${convert(timesheet?.totalTime).minutes}m ${convert(timesheet?.totalTime).seconds}s` || 'Not started'}
                   </p>
                   <p className="col-span-3 grid place-content-center border-r border-white border-opacity-25 h-full py-2 text-sm">
                     {timesheet?.employee?.departmentName || 'Department'}

@@ -116,7 +116,8 @@ const ShowTasksByMyId = () => {
                   <div className="col-span-1 py-3 border-r border-white border-opacity-25 h-full">
                     <FlagIcon className={`h-5 w-5 mx-auto ${task?.priority?.color}`} />
                   </div>
-                  <p className="col-span-1 text-sm">{`${task?.totalTime} min` || '0 min'}</p>
+                  {`${convert(task?.totalTime).hours}hr ${convert(task?.totalTime).minutes}m ${convert(task?.totalTime).seconds}s` || 'Not started'}
+
                   <p className="col-span-2 py-3 border-r border-white border-opacity-25 text-center text-sm h-full">
                     {!!task?.taskDate ? task?.taskDate : 'Unscheduled task'}
                   </p>
