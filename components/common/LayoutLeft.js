@@ -116,7 +116,7 @@ const LayoutLeft = () => {
           </Link>
         )}
 
-        {/* users link goes here */}
+        {/* if admin or team leader link goes here */}
         {userData?.role === 'Admin' || userData?.role === 'Team Leader' ? (
           <Link href="/timesheets" legacyBehavior>
             <div className="flex items-center px-4 py-[5px] mt-4 cursor-pointer hover:bg-amrblue hover:bg-opacity-20">
