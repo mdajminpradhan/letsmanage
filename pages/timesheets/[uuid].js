@@ -44,7 +44,7 @@ const Tasks = () => {
             const docRef = doc(getFirestore(), `timesheets`, query.uuid);
 
             onSnapshot(docRef, (doc) => {
-              setTimesheet(docSnap.data());
+              setTimesheet(doc.data());
               setIsLoading(false);
             });
           })()
