@@ -18,6 +18,7 @@ import { getAuth, signOut } from 'firebase/auth';
 import Link from 'next/link';
 import CopyInvite from '../dashboard/CopyInvite';
 import Head from 'next/head';
+import MenuTransition from './MenuTransition';
 
 const Layout = ({ titleFromChild = '', children }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -170,20 +171,12 @@ const Layout = ({ titleFromChild = '', children }) => {
                   {/* <div className="h-12 w-12 rounded-full relative">
                     <Image src="/assets/images/avatar.png" alt="Picture of the author" fill />
                   </div> */}
-                  <p className='mr-4'>{userData?.name || 'Name'}</p>
+                  <p className="mr-4">{userData?.name || 'Name'}</p>
                   <ChevronDownIcon className="h-6 w-6 relative -left-1 text-white" aria-hidden="true" />
                 </Menu.Button>
               </div>
-              <Transition
-                as={Fragment}
-                enter="transition ease-out duration-100"
-                enterFrom="transform opacity-0 scale-95"
-                enterTo="transform opacity-100 scale-100"
-                leave="transition ease-in duration-75"
-                leaveFrom="transform opacity-100 scale-100"
-                leaveTo="transform opacity-0 scale-95"
-              >
-                <Menu.Items className="absolute right-0 mt-2 w-48 origin-top-right divide-y rounded-md bg-amrblue bg-opacity-25 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+              <MenuTransition>
+                <Menu.Items className="absolute right-0 mt-2 w-56 px-2 origin-top-right divide-y rounded-md bg-white bg-opacity-10 shadow-lg ring-0 focus:outline-none">
                   <div className="py-1 relative">
                     <div className="pl-2 pt-2 pb-2 border-b border-white border-opacity-25">
                       <p>{userData?.name?.substring(0, 15) + '...'}</p>
@@ -214,7 +207,7 @@ const Layout = ({ titleFromChild = '', children }) => {
                     </Menu.Item>
                   </div>
                 </Menu.Items>
-              </Transition>
+              </MenuTransition>
             </Menu>
           </div>
 
