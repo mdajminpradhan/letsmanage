@@ -5,7 +5,7 @@ import { TrashIcon } from '@heroicons/react/24/outline';
 import { Menu } from '@headlessui/react';
 import MenuTransition from '@/components/common/MenuTransition';
 import { useRouter } from 'next/router';
-import { deleteDoc, doc, getDoc, getFirestore } from 'firebase/firestore';
+import { deleteDoc, doc, getFirestore, onSnapshot } from 'firebase/firestore';
 import useAppStore from '@/appStore';
 import { AdvancedImage } from '@cloudinary/react';
 import { Cloudinary } from '@cloudinary/url-gen';
