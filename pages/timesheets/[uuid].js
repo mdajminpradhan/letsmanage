@@ -42,15 +42,11 @@ const Tasks = () => {
       Object.keys(query)[0] == 'uuid'
         ? (async () => {
             const docRef = doc(getFirestore(), `timesheets`, query.uuid);
-            const docSnap = await getDoc(docRef);
 
-            if (docSnap.exists()) {
+            onSnapshot(docRef, (doc) => {
               setTimesheet(docSnap.data());
               setIsLoading(false);
-            } else {
-              console.log('No such document!');
-              setTimesheet('');
-            }
+            });
           })()
         : push('/');
     }
@@ -82,7 +78,7 @@ const Tasks = () => {
             <div className="w-full">
               <p className="sm:text-xl">Time tracking - {timesheet?.employee?.name || 'Task name'}</p>
               <div className="grid grid-cols-2 gap-y-6 w-full sm:flex sm:items-center mt-6 sm:mt-4">
-                <div className=''>
+                <div className="">
                   <p className="text-sm bg-amrblue bg-opacity-25 px-2 py-1 w-20 rounded-md">{timesheet?.employee?.departmentName || 'Name'}</p>
                 </div>
                 <p className="text-sm ml-1.5 sm:ml-10">{timesheet?.date || 'Timesheet date'}</p>
