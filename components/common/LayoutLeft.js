@@ -78,25 +78,27 @@ const LayoutLeft = () => {
                     <span>{record.name || 'Space title'}</span>
                   </a>
                 </Link>
-                <Menu as="div" className="relative inline-block text-left">
-                  <div>
-                    <Menu.Button className="text-white outline-none focus:ring-0 pr-3">
-                      <EllipsisHorizontalIcon className="h-6 w-6" />
-                    </Menu.Button>
-                  </div>
-                  <MenuTransition>
-                    <Menu.Items className="absolute right-0 mt-2 w-40 origin-top-rightrounded-md shadow-lg bg-amrblue bg-opacity-25 rounded-lg focus:ring-0 focus:outline-none">
-                      <div className="px-2 py-2 cursor-pointer">
-                        <Menu.Item>
-                          <div className="flex items-center" onClick={() => handleDelete(record.id)}>
-                            <TrashIcon className="h-6 w-6 stroke-red-400" />
-                            <span className="ml-2">{isDeleting === true ? 'Deleting...' : 'Delete'}</span>
-                          </div>
-                        </Menu.Item>
-                      </div>
-                    </Menu.Items>
-                  </MenuTransition>
-                </Menu>
+                {userData?.role === 'Admin' && (
+                  <Menu as="div" className="relative inline-block text-left">
+                    <div>
+                      <Menu.Button className="text-white outline-none focus:ring-0 pr-3">
+                        <EllipsisHorizontalIcon className="h-6 w-6" />
+                      </Menu.Button>
+                    </div>
+                    <MenuTransition>
+                      <Menu.Items className="absolute right-0 mt-2 w-40 origin-top-rightrounded-md shadow-lg bg-amrblue bg-opacity-25 rounded-lg focus:ring-0 focus:outline-none">
+                        <div className="px-2 py-2 cursor-pointer">
+                          <Menu.Item>
+                            <div className="flex items-center" onClick={() => handleDelete(record.id)}>
+                              <TrashIcon className="h-6 w-6 stroke-red-400" />
+                              <span className="ml-2">{isDeleting === true ? 'Deleting...' : 'Delete'}</span>
+                            </div>
+                          </Menu.Item>
+                        </div>
+                      </Menu.Items>
+                    </MenuTransition>
+                  </Menu>
+                )}
               </li>
             ))
           ) : (
@@ -120,7 +122,7 @@ const LayoutLeft = () => {
         {userData?.role === 'Admin' || userData?.role === 'Team Leader' ? (
           <Link href="/timesheets" legacyBehavior>
             <div className="flex items-center px-4 py-[5px] mt-4 cursor-pointer hover:bg-amrblue hover:bg-opacity-20">
-              <ClockIcon className='h-6 w-6 stroke-third' />
+              <ClockIcon className="h-6 w-6 stroke-third" />
               <a className="w-full ml-2">Timesheets</a>
             </div>
           </Link>

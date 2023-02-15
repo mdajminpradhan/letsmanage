@@ -167,9 +167,10 @@ const Layout = ({ titleFromChild = '', children }) => {
             <Menu as="div" className="relative inline-block text-left">
               <div>
                 <Menu.Button className="flex items-center px-4 py-2 text-sm font-medium focus:outline-none focus-visible:ring-0">
-                  <div className="h-12 w-12 rounded-full relative">
+                  {/* <div className="h-12 w-12 rounded-full relative">
                     <Image src="/assets/images/avatar.png" alt="Picture of the author" fill />
-                  </div>
+                  </div> */}
+                  <p>{userData?.name || 'Name'}</p>
                   <ChevronDownIcon className="h-6 w-6 relative -left-1 text-white" aria-hidden="true" />
                 </Menu.Button>
               </div>
