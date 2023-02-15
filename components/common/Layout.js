@@ -170,7 +170,7 @@ const Layout = ({ titleFromChild = '', children }) => {
                   {/* <div className="h-12 w-12 rounded-full relative">
                     <Image src="/assets/images/avatar.png" alt="Picture of the author" fill />
                   </div> */}
-                  <p>{userData?.name || 'Name'}</p>
+                  <p className='mr-4'>{userData?.name || 'Name'}</p>
                   <ChevronDownIcon className="h-6 w-6 relative -left-1 text-white" aria-hidden="true" />
                 </Menu.Button>
               </div>
