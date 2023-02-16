@@ -201,6 +201,11 @@ const Layout = ({ titleFromChild = '', children }) => {
                       </button>
                     </Menu.Item>
                     <Menu.Item>
+                      <button className={`group flex w-full items-center rounded-md px-4 py-2 text-sm`} onClick={() => alert('Link is comming...')}>
+                        Download Tracker
+                      </button>
+                    </Menu.Item>
+                    <Menu.Item>
                       <button className={`group flex w-full items-center rounded-md px-4 py-2 text-sm`} onClick={() => signOut(getAuth())}>
                         Logout
                       </button>
