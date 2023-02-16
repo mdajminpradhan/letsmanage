@@ -114,6 +114,16 @@ body {
   color: white !important;
 }
 
+// hide scroolbar but keep functionality
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
 // media query
 @media only screen and (max-width: 1024px) {
   .app-layout {

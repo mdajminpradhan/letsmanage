@@ -121,7 +121,7 @@ const Layout = ({ titleFromChild = '', children }) => {
           </section>
         )}
 
-        <section className="overflow-x-scroll">
+        <section className="overflow-x-scroll hide-scrollbar">
           <div className={`flex justify-between items-center sm:px-8 ${userData?.role !== 'User' ? 'mt-8' : 'mt-5'}`}>
             {userData?.role == 'User' ? (
               <div className="flex items-center">
@@ -176,7 +176,7 @@ const Layout = ({ titleFromChild = '', children }) => {
                 </Menu.Button>
               </div>
               <MenuTransition>
-                <Menu.Items className="absolute right-0 mt-2 w-56 px-2 origin-top-right divide-y rounded-md bg-white bg-opacity-10 shadow-lg ring-0 focus:outline-none">
+                <Menu.Items className="absolute right-0 mt-2 w-56 px-2 origin-top-right divide-y rounded-md bg-white bg-opacity-10 shadow-lg ring-0 focus:outline-none hide-scrollbar">
                   <div className="py-1 relative">
                     <div className="pl-2 pt-2 pb-2 border-b border-white border-opacity-25">
                       <p>{userData?.name?.substring(0, 15) + '...'}</p>
