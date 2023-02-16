@@ -176,7 +176,7 @@ const Layout = ({ titleFromChild = '', children }) => {
                 </Menu.Button>
               </div>
               <MenuTransition>
-                <Menu.Items className="absolute right-0 mt-2 w-56 px-2 origin-top-right divide-y rounded-md bg-white bg-opacity-10 shadow-lg ring-0 focus:outline-none hide-scrollbar">
+                <Menu.Items className="absolute right-0 mt-2 w-56 px-2 origin-top-right divide-y rounded-md bg-gray-900 shadow-lg ring-0 focus:outline-none hide-scrollbar">
                   <div className="py-1 relative">
                     <div className="pl-2 pt-2 pb-2 border-b border-white border-opacity-25">
                       <p>{userData?.name?.substring(0, 15) + '...'}</p>
