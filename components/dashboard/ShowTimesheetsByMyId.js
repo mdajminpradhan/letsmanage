@@ -62,7 +62,7 @@ const ShowTasksByMyId = () => {
             <div>
               <Menu.Button className="px-2 sm:px-4 py-2 md:px-3 text-xs md:text-sm focus:outline-none ring-0 relative flex items-center">
                 <CalendarDaysIcon className="hidden sm:block h-5 w-5 text-white relative" title="Start date" />
-                <span className='pl-2 pt-[2px]'>
+                <span className="pl-2 pt-[2px]">
                   {format(selectedDate.startDate, 'dd-MM-yyyy')} - {format(selectedDate.endDate, 'dd-MM-yyyy')}
                 </span>
               </Menu.Button>
@@ -100,7 +100,9 @@ const ShowTasksByMyId = () => {
                 >
                   <p className="col-span-4 border-r border-white border-opacity-25 h-full py-2 text-sm">{timesheet?.employee?.name || 'Employee'}</p>
                   <p className="col-span-3 grid place-content-center border-r border-white border-opacity-25 h-full py-2 text-sm">
-                    {`${convert(timesheet?.totalTime).hours}hr ${convert(timesheet?.totalTime).minutes}m ${convert(timesheet?.totalTime).seconds}s` || 'Not started'}
+                    {!!timesheet?.totalTime
+                      ? `${convert(timesheet?.totalTime).hours}hr ${convert(timesheet?.totalTime).minutes}m ${convert(timesheet?.totalTime).seconds}s`
+                      : '0 min'}
                   </p>
                   <p className="col-span-3 grid place-content-center border-r border-white border-opacity-25 h-full py-2 text-sm">
                     {timesheet?.employee?.departmentName || 'Department'}
