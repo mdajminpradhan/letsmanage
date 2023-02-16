@@ -62,7 +62,7 @@ const Users = () => {
   return (
     <Layout titleFromChild="Users">
       <div className="flex justify-between items-center w-11/12 mx-auto mt-10 mb-8">
-        <p className="text-lg mb-4 font-medium w-11/12 mx-auto capitalize">{selectedStatus} Users</p>
+        <p className="text-lg mb-4 font-medium w-11/12 mx-auto capitalize">{selectedStatus}</p>
 
         <Listbox value={selectedStatus} onChange={setSelectedStatus}>
           <div className="relative ml-2">
