@@ -8,6 +8,7 @@ import Link from 'next/link';
 import useAppStore from '@/appStore';
 import { Transition, Listbox } from '@headlessui/react';
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
+var convert = require('convert-seconds');
 
 // task status
 const statuses = ['To Do', 'In Progress', 'Complete', 'Closed'];
