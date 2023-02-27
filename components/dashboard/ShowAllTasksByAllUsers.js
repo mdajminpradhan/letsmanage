@@ -20,6 +20,7 @@ const statuses = ['To Do', 'In Progress', 'Complete', 'Closed'];
 
 const ShowAllTasksByAllUsers = () => {
   const [tasks, setTasks] = useState([]);
+  const [finalTasks, setFinalTasks] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedEmployee, setSelectedEmployee] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('');
@@ -30,7 +31,6 @@ const ShowAllTasksByAllUsers = () => {
       key: 'selection'
     }
   ]);
-  console.log('🔐 -> file: ShowAllTasksByAllUsers.js:33 -> ShowAllTasksByAllUsers -> dateRange:', dateRange);
 
   // router
   const { query: routerQuery } = useRouter();
@@ -113,10 +113,19 @@ const ShowAllTasksByAllUsers = () => {
   useEffect(() => {
     const { startDate, endDate } = dateRange[0];
     const selectedDate = eachDayOfInterval({ start: startDate, end: endDate });
+
+    let allTask = [];
+    const unscheduled = tasks.filter((task) => task.taskDate === '');
+    allTask.push(...unscheduled);
+
     selectedDate.map((day) => {
-      const renegeTask = tasks.filter((task) => task.taskDate === format(day, 'dd/MM/yyyy'));
+      const todayTask = tasks.filter((task) => task.taskDate === format(day, 'dd/MM/yyyy'));
+      allTask.push(...todayTask);
     });
-  }, [dateRange]);
+
+    setFinalTasks(allTask);
+    allTask = [];
+  }, [dateRange, tasks]);
 
   return (
     <>
@@ -229,7 +238,7 @@ const ShowAllTasksByAllUsers = () => {
           {isLoading === true ? (
             <Skeleton count={10} baseColor="#09387a" />
           ) : tasks?.length > 0 ? (
-            tasks.map((task, index) => (
+            finalTasks.map((task, index) => (
               <Link href={`/tasks/${routerQuery.spaceId}?taskId=${task.id}`} key={index}>
                 <div className="grid grid-cols-12 items-center border-b border-white border-opacity-25 pl-8 pr-2 hover:bg-amrblue hover:bg-opacity-10 cursor-pointer">
                   <p className="col-span-4 py-3 border-r border-white border-opacity-25 text-sm">{task?.name?.substring(0, 45) || 'Task title'}...</p>
