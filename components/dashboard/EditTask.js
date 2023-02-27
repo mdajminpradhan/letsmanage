@@ -50,6 +50,7 @@ const EditTask = ({ isOpen, setIsOpen, task, spaceId, taskId }) => {
   const [subTasks, setSubTasks] = useState([]);
   const [taskDate, setTaskDate] = useState(new Date());
   const [isLoading, setIsLoading] = useState(false);
+  const [spaceUser, setSpaceUser] = useState([]);
 
   // router
   const { push } = useRouter();
@@ -105,10 +106,20 @@ const EditTask = ({ isOpen, setIsOpen, task, spaceId, taskId }) => {
       setSelectedSpace({ name: 'Select space' });
     }
   }, [spaces]);
+  
+
+  // set current selected spaces
+  useEffect(() => {
+    const getThisSpaceEmployee = users.filter((user) => user.departmentId === selectedSpace.id);
+    setSpaceUser(getThisSpaceEmployee);
+  }, [spaces,selectedSpace, users]);
+  
+
+
 
   // updateTask task
   const updateTask = async (formdata) => {
-    // setIsLoading(true);
+    setIsLoading(true);
 
     if (selectedUser === '' && flagSelected === '') {
       toast.error('Please all the fields');
@@ -123,12 +134,10 @@ const EditTask = ({ isOpen, setIsOpen, task, spaceId, taskId }) => {
     formdata.status = 'To Do';
     formdata.selectedEmployeeId = selectedUser?.id;
     formdata.selectedEmployeeName = selectedUser?.name;
-
+  
     try {
       const docRef = doc(getFirestore(), `spaces/${spaceId}/tasks`, taskId);
-      const record = await updateDoc(docRef, formdata).then(value => { console.log("value",value)})
-      console.log('🔐 -> file: EditTask.js:131 -> updateTask -> record:', record);
-
+      const record = await updateDoc(docRef, formdata)
 
       push(`/tasks/${selectedSpace.id}?taskId=${taskId}`); //TODO: we didn't get any data so I put the task id
       setIsOpen(false);
@@ -269,7 +278,7 @@ const EditTask = ({ isOpen, setIsOpen, task, spaceId, taskId }) => {
 
                           <Transition as={Fragment} leave="transition ease-in duration-100" leaveFrom="opacity-100" leaveTo="opacity-0">
                             <Listbox.Options className="absolute mt-1 py-2 h-60 w-64 overflow-y-scroll rounded-md bg-gray-800 shadow-lg ring-0 focus:outline-none sm:text-sm px-2">
-                              {users.map((user, index) => (
+                              {spaceUser.map((user, index) => (
                                 <Listbox.Option
                                   key={index}
                                   className={({ active }) =>
@@ -388,7 +397,6 @@ const EditTask = ({ isOpen, setIsOpen, task, spaceId, taskId }) => {
                         dateFormat="dd/MM/yyyy"
                         placeholderText="Task date"
                       />
-                     
                     </div>
                   </div>
 
