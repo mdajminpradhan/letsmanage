@@ -123,7 +123,7 @@ const ShowAllTasksByAllUsers = () => {
       allTask.push(...todayTask);
     });
 
-    setFinalTasks(allTask);
+    allTask.length === 0 ? setFinalTasks(tasks) : setFinalTasks(allTask);
     allTask = [];
   }, [dateRange, tasks]);
 
