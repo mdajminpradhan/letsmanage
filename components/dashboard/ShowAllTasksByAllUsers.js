@@ -2,10 +2,14 @@ import useAppStore from '@/appStore';
 import { Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 import { FlagIcon } from '@heroicons/react/24/solid';
+import { eachDayOfInterval, endOfMonth, format, startOfMonth } from 'date-fns';
 import { collection, doc, getFirestore, onSnapshot, query, updateDoc, where } from 'firebase/firestore';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { Fragment, useEffect, useState } from 'react';
+import { DateRangePicker } from 'react-date-range';
+import 'react-date-range/dist/styles.css'; // main css file
+import 'react-date-range/dist/theme/default.css'; // theme css file
 import { toast } from 'react-hot-toast';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
@@ -19,6 +23,14 @@ const ShowAllTasksByAllUsers = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedEmployee, setSelectedEmployee] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('');
+  const [dateRange, setDateRange] = useState([
+    {
+      startDate: startOfMonth(new Date()),
+      endDate: endOfMonth(new Date()),
+      key: 'selection'
+    }
+  ]);
+  console.log('🔐 -> file: ShowAllTasksByAllUsers.js:33 -> ShowAllTasksByAllUsers -> dateRange:', dateRange);
 
   // router
   const { query: routerQuery } = useRouter();
@@ -98,12 +110,43 @@ const ShowAllTasksByAllUsers = () => {
     }
   };
 
+  useEffect(() => {
+    const { startDate, endDate } = dateRange[0];
+    const selectedDate = eachDayOfInterval({ start: startDate, end: endDate });
+    selectedDate.map((day) => {
+      const renegeTask = tasks.filter((task) => task.taskDate === format(day, 'dd/MM/yyyy'));
+    });
+  }, [dateRange]);
+
   return (
     <>
       <div className="flex justify-between items-center w-11/12 mx-auto mt-10 mb-6">
         <p className="text-lg">All Tasks</p>
 
         <div className="flex items-center">
+          <Listbox>
+            <div className="relative ml-2">
+              <Listbox.Button className="relative w-full cursor-pointer rounded-full border border-white border-opacity-10 text-sm px-4 py-2.5 pr-14 focus:outline-none focus:ring-0">
+                <span className="block truncate">Filter By Date</span>
+                <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                  <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                </span>
+              </Listbox.Button>
+              <Transition as={Fragment} leave="transition ease-in duration-100" leaveFrom="opacity-100" leaveTo="opacity-0">
+                <Listbox.Options className="absolute z-50 rounded-md right-0 mt-1 bg-gray-900 py-1 shadow-lg ring-0 focus:outline-none sm:text-sm">
+                  <DateRangePicker
+                    onChange={(item) => setDateRange([item.selection])}
+                    ranges={dateRange}
+                    showSelectionPreview={true}
+                    moveRangeOnFirstSelection={false}
+                    months={1}
+                    direction="horizontal"
+                  />
+                </Listbox.Options>
+              </Transition>
+            </div>
+          </Listbox>
+
           <Listbox value={selectedStatus} onChange={setSelectedStatus}>
             <div className="relative ml-2">
               <Listbox.Button className="relative w-full cursor-pointer rounded-full border border-white border-opacity-10 text-sm px-4 py-2.5 pr-14 focus:outline-none focus:ring-0">
