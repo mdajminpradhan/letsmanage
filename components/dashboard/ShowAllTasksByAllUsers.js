@@ -33,7 +33,7 @@ const ShowAllTasksByAllUsers = () => {
   ]);
 
   // router
-  const { query: routerQuery } = useRouter();
+  const { query: routerQuery, asPath } = useRouter();
 
   // app global store
   const { users } = useAppStore((state) => ({
@@ -89,13 +89,18 @@ const ShowAllTasksByAllUsers = () => {
       const q = query(collection(getFirestore(), `spaces/${routerQuery.spaceId}/tasks`), where('status', '==', selectedStatus));
       // getting data
       setTasksFunction(q);
+    } else if (selectedStatus === '' && selectedEmployee !== '') {
+      // query
+      const q = query(collection(getFirestore(), `spaces/${routerQuery.spaceId}/tasks`), where('selectedEmployeeId', '==', selectedEmployee?.id));
+      // getting data
+      setTasksFunction(q);
     } else if (selectedStatus === '' && selectedEmployee === '') {
       // query
       const q = query(collection(getFirestore(), `spaces/${routerQuery.spaceId}/tasks`));
       // getting data
       setTasksFunction(q);
     }
-  }, [selectedStatus, selectedEmployee]);
+  }, [selectedStatus, selectedEmployee, asPath]);
 
   // update status
   const handleUpdate = async (whatToUpdate, task) => {
