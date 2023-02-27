@@ -1,19 +1,19 @@
-import { Dialog, Transition, Listbox } from '@headlessui/react';
-import TransitionChild from '../common/TransitionChild';
-import { Fragment, useEffect, useState } from 'react';
+import useAppStore from '@/appStore';
+import { Dialog, Listbox, Transition } from '@headlessui/react';
 import { CalendarDaysIcon, CheckIcon, ChevronUpDownIcon, FlagIcon, PlusSmallIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { TrashIcon, UserGroupIcon } from '@heroicons/react/24/outline';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { format, isValid, parse } from 'date-fns';
+import { doc, getDoc, getFirestore, updateDoc } from 'firebase/firestore';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
+import { Fragment, useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import useAppStore from '@/appStore';
-import { doc, getDoc, getFirestore, updateDoc } from 'firebase/firestore';
 import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
 import { toast } from 'react-hot-toast';
-import { useRouter } from 'next/router';
-import { format } from 'date-fns';
+import * as yup from 'yup';
+import TransitionChild from '../common/TransitionChild';
 
 const schema = yup
   .object()
@@ -43,6 +43,7 @@ const priorities = [
 ];
 
 const EditTask = ({ isOpen, setIsOpen, task, spaceId, taskId }) => {
+
   const [selectedSpace, setSelectedSpace] = useState([]);
   const [selectedUser, setSelectedUser] = useState('');
   const [flagSelected, setFlagSelected] = useState('');
@@ -107,7 +108,7 @@ const EditTask = ({ isOpen, setIsOpen, task, spaceId, taskId }) => {
 
   // updateTask task
   const updateTask = async (formdata) => {
-    setIsLoading(true);
+    // setIsLoading(true);
 
     if (selectedUser === '' && flagSelected === '') {
       toast.error('Please all the fields');
@@ -118,16 +119,18 @@ const EditTask = ({ isOpen, setIsOpen, task, spaceId, taskId }) => {
     formdata.selectedSpace = doc(getFirestore(), 'spaces', selectedSpace.id);
     formdata.priority = flagSelected;
     formdata.subTasks = subTasks;
-    !!taskDate ? (formdata.taskDate = format(taskDate, 'dd/MM/yyyy')) : taskDate;
+    !!isValid(taskDate)  ? (formdata.taskDate = format(taskDate, 'dd/MM/yyyy')) : taskDate;
     formdata.status = 'To Do';
     formdata.selectedEmployeeId = selectedUser?.id;
     formdata.selectedEmployeeName = selectedUser?.name;
 
     try {
       const docRef = doc(getFirestore(), `spaces/${spaceId}/tasks`, taskId);
-      const record = await updateDoc(docRef, formdata);
+      const record = await updateDoc(docRef, formdata).then(value => { console.log("value",value)})
+      console.log('🔐 -> file: EditTask.js:131 -> updateTask -> record:', record);
 
-      push(`/tasks/${selectedSpace.id}?taskId=${record.id}`);
+
+      push(`/tasks/${selectedSpace.id}?taskId=${taskId}`); //TODO: we didn't get any data so I put the task id
       setIsOpen(false);
       setIsLoading(false);
       setSelectedSpace([]);
@@ -251,7 +254,10 @@ const EditTask = ({ isOpen, setIsOpen, task, spaceId, taskId }) => {
                             <div className="h-10 w-10 border border-white border-opacity-30 rounded-full p-1.5">
                               <Listbox.Button className="relative w-full cursor-pointer rounded-full border border-white border-dashed border-opacity-30 text-xs p-[2px] focus:outline-none focus:ring-0">
                                 <UserGroupIcon className="h-5 w-5 text-white stroke-[.5] stroke-gray-300" />
-                                <PlusSmallIcon className="h-2 w-2 text-white bg-gray-500 rounded-full absolute right-0 bottom-0 p-0" aria-hidden="true" />
+                                <PlusSmallIcon
+                                  className="h-2 w-2 text-white bg-gray-500 rounded-full absolute right-0 bottom-0 p-0"
+                                  aria-hidden="true"
+                                />
                               </Listbox.Button>
                             </div>
                           ) : (
@@ -266,7 +272,9 @@ const EditTask = ({ isOpen, setIsOpen, task, spaceId, taskId }) => {
                               {users.map((user, index) => (
                                 <Listbox.Option
                                   key={index}
-                                  className={({ active }) => `flex items-center relative cursor-pointer select-none py-1 px-2 rounded-md ${active ? 'bg-gray-900' : ''}`}
+                                  className={({ active }) =>
+                                    `flex items-center relative cursor-pointer select-none py-1 px-2 rounded-md ${active ? 'bg-gray-900' : ''}`
+                                  }
                                   value={user}
                                 >
                                   {({ selected }) => (
@@ -356,7 +364,9 @@ const EditTask = ({ isOpen, setIsOpen, task, spaceId, taskId }) => {
                             {priorities.map((priority, index) => (
                               <Listbox.Option
                                 key={index}
-                                className={({ active }) => `flex items-center relative cursor-pointer select-none py-2 pl-3 pr-2 mb-2 ${active ? 'bg-gray-900' : ''}`}
+                                className={({ active }) =>
+                                  `flex items-center relative cursor-pointer select-none py-2 pl-3 pr-2 mb-2 ${active ? 'bg-gray-900' : ''}`
+                                }
                                 value={priority}
                               >
                                 <FlagIcon className={`h-5 w-5 ${priority.color}`} />
@@ -371,20 +381,23 @@ const EditTask = ({ isOpen, setIsOpen, task, spaceId, taskId }) => {
                     <div className="flex items-center">
                       <CalendarDaysIcon className="h-5 w-5 text-white ml-5 relative -top-1" title="Start date" />
                       <DatePicker
-                        selected={taskDate}
+                        selected={isValid(taskDate) ? taskDate : parse(taskDate, 'dd/MM/yyyy', new Date())}
                         onChange={(date) => setTaskDate(date)}
                         className="bg-transparent relative -top-1 cursor-pointer focus:ring-0 outline-none ml-2 text-sm"
                         title="Start date"
                         dateFormat="dd/MM/yyyy"
                         placeholderText="Task date"
                       />
+                     
                     </div>
                   </div>
 
                   <button
                     type={isLoading === true ? 'button' : 'submit'}
                     className={` ${
-                      selectedSpace.name === 'Select space' ? 'bg-gray-700' : 'bg-amrblue hover:bg-hoverPrimary transform hover:scale-95 transition-all duration-300'
+                      selectedSpace.name === 'Select space'
+                        ? 'bg-gray-700'
+                        : 'bg-amrblue hover:bg-hoverPrimary transform hover:scale-95 transition-all duration-300'
                     }  px-4 py-2 rounded-sm text-sm text-white font-medium focus:ring-0 outline-none`}
                   >
                     {isLoading === true ? 'Updating...' : 'Update Task'}
