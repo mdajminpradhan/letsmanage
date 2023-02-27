@@ -1,14 +1,14 @@
+import useAppStore from '@/appStore';
+import { Listbox, Transition } from '@headlessui/react';
+import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 import { FlagIcon } from '@heroicons/react/24/solid';
-import { Fragment, useEffect, useState } from 'react';
 import { collection, doc, getFirestore, onSnapshot, query, updateDoc, where } from 'firebase/firestore';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { Fragment, useEffect, useState } from 'react';
+import { toast } from 'react-hot-toast';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
-import Link from 'next/link';
-import useAppStore from '@/appStore';
-import { Transition, Listbox } from '@headlessui/react';
-import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
-import { toast } from 'react-hot-toast';
 var convert = require('convert-seconds');
 
 // task status
@@ -18,7 +18,7 @@ const ShowAllTasksByAllUsers = () => {
   const [tasks, setTasks] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedEmployee, setSelectedEmployee] = useState('');
-  const [selectedStatus, setSelectedStatus] = useState('To Do');
+  const [selectedStatus, setSelectedStatus] = useState('');
 
   // router
   const { query: routerQuery } = useRouter();
@@ -50,31 +50,7 @@ const ShowAllTasksByAllUsers = () => {
 
   // getting all tasks
   useEffect(() => {
-    // when status changes
-    if (selectedEmployee !== '' && selectedStatus !== 'To Do') {
-      // query
-      const q = query(collection(getFirestore(), `spaces/${routerQuery.spaceId}/tasks`), where('status', '==', selectedStatus));
-
-      // getting data
-      onSnapshot(q, (querySnapshot) => {
-        const records = [];
-        querySnapshot.forEach((doc) => {
-          const record = doc.data();
-          record.id = doc.id;
-          records.push(record);
-        });
-
-        setTasks(records);
-        setIsLoading(false);
-      });
-    }
-
-    // when changes
-    if (selectedStatus == 'To Do' && selectedEmployee !== '') {
-      // query
-      const q = query(collection(getFirestore(), `spaces/${routerQuery.spaceId}/tasks`), where('selectedEmployeeId', '==', selectedEmployee?.id));
-
-      // getting data
+    const setTasksFunction = (q) => {
       onSnapshot(q, (querySnapshot) => {
         const records = [];
         querySnapshot.forEach((doc) => {
@@ -85,28 +61,27 @@ const ShowAllTasksByAllUsers = () => {
         setTasks(records);
         setIsLoading(false);
       });
-    }
+    };
 
-    // when employee and status both changes
-    if (selectedStatus !== 'To Do' && selectedEmployee !== '') {
+    if (selectedStatus !== '' && selectedEmployee !== '') {
       // query
       const q = query(
         collection(getFirestore(), `spaces/${routerQuery.spaceId}/tasks`),
-        where('status', '==', selectedStatus),
-        where('selectedEmployeeId', '==', selectedEmployee?.id)
+        where('selectedEmployeeId', '==', selectedEmployee?.id),
+        where('status', '==', selectedStatus)
       );
-
       // getting data
-      onSnapshot(q, (querySnapshot) => {
-        const records = [];
-        querySnapshot.forEach((doc) => {
-          const record = doc.data();
-          record.id = doc.id;
-          records.push(record);
-        });
-        setTasks(records);
-        setIsLoading(false);
-      });
+      setTasksFunction(q);
+    } else if (selectedStatus !== '' && selectedEmployee === '') {
+      // query
+      const q = query(collection(getFirestore(), `spaces/${routerQuery.spaceId}/tasks`), where('status', '==', selectedStatus));
+      // getting data
+      setTasksFunction(q);
+    } else if (selectedStatus === '' && selectedEmployee === '') {
+      // query
+      const q = query(collection(getFirestore(), `spaces/${routerQuery.spaceId}/tasks`));
+      // getting data
+      setTasksFunction(q);
     }
   }, [selectedStatus, selectedEmployee]);
 
@@ -132,7 +107,7 @@ const ShowAllTasksByAllUsers = () => {
           <Listbox value={selectedStatus} onChange={setSelectedStatus}>
             <div className="relative ml-2">
               <Listbox.Button className="relative w-full cursor-pointer rounded-full border border-white border-opacity-10 text-sm px-4 py-2.5 pr-14 focus:outline-none focus:ring-0">
-                <span className="block truncate">{!!selectedStatus ? selectedStatus : 'To Do'}</span>
+                <span className="block truncate">{!!selectedStatus ? selectedStatus : 'Status'}</span>
                 <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                   <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
                 </span>
