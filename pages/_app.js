@@ -1,9 +1,9 @@
 require('firebase.config');
-import 'styles/globals.scss';
-import 'styles/app.scss';
-import { useEffect } from 'react';
 import useAppStore from '@/appStore';
+import { useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
+import 'styles/app.scss';
+import 'styles/globals.scss';
 
 const App = ({ Component, pageProps }) => {
   // app global store
@@ -18,9 +18,9 @@ const App = ({ Component, pageProps }) => {
   useEffect(() => {
     const createSpacePopUp = (event) => {
       if (userData?.role !== 'User') {
-        if (event.keyCode === 67 && isCreateTaskOpen === false && userData?.role === 'Admin') {
+        if (event.altKey && event.keyCode === 67 && isCreateTaskOpen === false && userData?.role === 'Admin') {
           setIsCreateSpaceOpen(true);
-        } else if (event.keyCode === 84 && isCreateSpaceOpen === false) {
+        } else if (event.altKey && event.keyCode === 84 && isCreateSpaceOpen === false) {
           setIsCreateTaskOpen(true);
         }
       }
