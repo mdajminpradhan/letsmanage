@@ -1,16 +1,16 @@
+import useAppStore from '@/appStore';
 import Layout from '@/components/common/Layout';
+import MenuTransition from '@/components/common/MenuTransition';
+import EditTask from '@/components/dashboard/EditTask';
+import { Listbox, Menu, Transition } from '@headlessui/react';
 import { CheckIcon, ChevronUpDownIcon, EllipsisHorizontalIcon } from '@heroicons/react/20/solid';
 import { TrashIcon } from '@heroicons/react/24/outline';
 import { FlagIcon, PencilIcon } from '@heroicons/react/24/solid';
-import { Menu, Transition, Listbox } from '@headlessui/react';
-import MenuTransition from '@/components/common/MenuTransition';
-import { Fragment, useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
 import { deleteDoc, doc, getDoc, getFirestore, updateDoc } from 'firebase/firestore';
-import useAppStore from '@/appStore';
-import EditTask from '@/components/dashboard/EditTask';
+import { useRouter } from 'next/router';
+import { Fragment, useEffect, useState } from 'react';
 
-const status = ['To Do', 'In Progress', 'Complete'];
+const status = ['To Do', 'In Progress', 'Complete', 'Closed'];
 
 const Tasks = () => {
   const [selected, setSelected] = useState('');
@@ -84,7 +84,7 @@ const Tasks = () => {
       ) : (
         <>
           <div className="flex justify-between w-11/12 sm:pl-8 pr-4 mx-auto mt-8 sm:mt-5">
-            <div className='w-full'>
+            <div className="w-full">
               <p className="sm:text-xl">{task.name || 'Task name'}</p>
               <div className="grid grid-cols-2 gap-y-6 w-full sm:flex sm:items-center mt-6 sm:mt-4">
                 <Listbox value={selected} onChange={handleUpdate}>

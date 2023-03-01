@@ -49,6 +49,8 @@ const CreateTask = ({ isOpen, setIsOpen }) => {
   const [subTasks, setSubTasks] = useState([]);
   const [taskDate, setTaskDate] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [spaceUser, setSpaceUser] = useState([]);
+
 
   // router
   const { push } = useRouter();
@@ -77,6 +79,12 @@ const CreateTask = ({ isOpen, setIsOpen }) => {
       setSelectedSpace({ name: 'Select space' });
     }
   }, [spaces]);
+
+  // set current selected spaces
+  useEffect(() => {
+    const getThisSpaceEmployee = users.filter((user) => user.departmentId === selectedSpace.id);
+    setSpaceUser(getThisSpaceEmployee);
+  }, [spaces, selectedSpace, users]);
 
   // creating task
   const createTask = async (formdata) => {
@@ -223,7 +231,10 @@ const CreateTask = ({ isOpen, setIsOpen }) => {
                             <div className="h-10 w-10 border border-white border-opacity-30 rounded-full p-1.5">
                               <Listbox.Button className="relative w-full cursor-pointer rounded-full border border-white border-dashed border-opacity-30 text-xs p-[2px] focus:outline-none focus:ring-0">
                                 <UserGroupIcon className="h-5 w-5 text-white stroke-[.5] stroke-gray-300" />
-                                <PlusSmallIcon className="h-2 w-2 text-white bg-gray-500 rounded-full absolute right-0 bottom-0 p-0" aria-hidden="true" />
+                                <PlusSmallIcon
+                                  className="h-2 w-2 text-white bg-gray-500 rounded-full absolute right-0 bottom-0 p-0"
+                                  aria-hidden="true"
+                                />
                               </Listbox.Button>
                             </div>
                           ) : (
@@ -235,10 +246,12 @@ const CreateTask = ({ isOpen, setIsOpen }) => {
 
                           <Transition as={Fragment} leave="transition ease-in duration-100" leaveFrom="opacity-100" leaveTo="opacity-0">
                             <Listbox.Options className="absolute mt-1 py-2 h-60 w-64 overflow-y-scroll rounded-md bg-gray-800 shadow-lg ring-0 focus:outline-none sm:text-sm px-2">
-                              {users.map((user, index) => (
+                              {spaceUser.map((user, index) => (
                                 <Listbox.Option
                                   key={index}
-                                  className={({ active }) => `flex items-center relative cursor-pointer select-none py-1 px-2 rounded-md ${active ? 'bg-gray-900' : ''}`}
+                                  className={({ active }) =>
+                                    `flex items-center relative cursor-pointer select-none py-1 px-2 rounded-md ${active ? 'bg-gray-900' : ''}`
+                                  }
                                   value={user}
                                 >
                                   {({ selected }) => (
@@ -328,7 +341,9 @@ const CreateTask = ({ isOpen, setIsOpen }) => {
                             {priorities.map((priority, index) => (
                               <Listbox.Option
                                 key={index}
-                                className={({ active }) => `flex items-center relative cursor-pointer select-none py-2 pl-3 pr-2 mb-2 ${active ? 'bg-gray-900' : ''}`}
+                                className={({ active }) =>
+                                  `flex items-center relative cursor-pointer select-none py-2 pl-3 pr-2 mb-2 ${active ? 'bg-gray-900' : ''}`
+                                }
                                 value={priority}
                               >
                                 <FlagIcon className={`h-5 w-5 ${priority.color}`} />
@@ -356,7 +371,9 @@ const CreateTask = ({ isOpen, setIsOpen }) => {
                   <button
                     type={isLoading === true ? 'button' : 'submit'}
                     className={` ${
-                      selectedSpace.name === 'Select space' ? 'bg-gray-700' : 'bg-amrblue hover:bg-hoverPrimary transform hover:scale-95 transition-all duration-300'
+                      selectedSpace.name === 'Select space'
+                        ? 'bg-gray-700'
+                        : 'bg-amrblue hover:bg-hoverPrimary transform hover:scale-95 transition-all duration-300'
                     }  px-4 py-2 rounded-sm text-sm text-white font-medium focus:ring-0 outline-none`}
                   >
                     {isLoading === true ? 'Creating...' : 'Create Task'}
